@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="cyberdaemon.ai">
+  <meta name="keywords" content="agentic identity, NHI, non-human identity AI agents, secure AI agents, agent identity framework, Bedrock agent identity, Copilot agent security, SPIFFE agentic AI, DIRA behavioral authorization, agentic AI security, mission-bound OAuth, SPIRE workload identity">
+  <meta name="description" content="What commercial platforms give you for securing agentic AI identities, what open standards add, and what none of them address yet. Reference architectures included.">
+  <link rel="canonical" href="https://identity.cyberdaemon.ai">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://identity.cyberdaemon.ai">
+  <meta property="og:title" content="Securing Agentic Identity / cyberdaemon.ai">
+  <meta property="og:description" content="What commercial platforms give you for securing agentic AI identities, what open standards add, and what none of them address yet.">
+  <meta property="og:site_name" content="cyberdaemon.ai">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Securing Agentic Identity / cyberdaemon.ai">
+  <meta name="twitter:description" content="Commercial platforms, open standards, reference architectures, and the behavioral authorization gap. Independent technical reference on AI agent security.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Securing Agentic Identity",
+    "description": "What commercial platforms give you for securing agentic AI identities, what open standards add, and what none of them address yet. Reference architectures included.",
+    "url": "https://identity.cyberdaemon.ai",
+    "author": {
+      "@type": "Organization",
+      "name": "cyberdaemon.ai",
+      "url": "https://cyberdaemon.ai"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "cyberdaemon.ai",
+      "url": "https://cyberdaemon.ai"
+    },
+    "keywords": "agentic identity, NHI, non-human identity, AI agents, secure AI agents, SPIFFE, DIRA, behavioral authorization, Bedrock agent security, Copilot agent identity"
+  }
+  </script>
+  <title>Securing Agentic Identity / cyberdaemon.ai</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-0: #0a0d10;
+      --bg-1: #111418;
+      --bg-2: #181d23;
+      --border: #252b33;
+      --border-light: #1e242c;
+      --accent: #4a9eff;
+      --accent-dim: #2a5a99;
+      --green: #3dba6f;
+      --yellow: #d4a017;
+      --red: #e85555;
+      --text: #e2e8f0;
+      --text-muted: #8a95a3;
+      --text-dim: #5a6370;
+      --font-serif: Georgia, 'Times New Roman', serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Courier New', Courier, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-0);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 13, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+
+    .nav-brand {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .nav-brand span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    @media (max-width: 680px) {
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 9px; letter-spacing: 0.08em; }
+      .nav-brand { font-size: 11px; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      background-color: var(--bg-0);
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-inner {
+      padding: 80px 0 60px;
+    }
+
+    .hero-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      color: var(--text);
+      margin-bottom: 22px;
+      max-width: 760px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* Level pills in hero */
+    .hero-levels {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .level-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: 2px;
+      padding: 4px 10px;
+      text-transform: uppercase;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-stat-number {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hero-stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .section-label-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .level-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: 2px;
+      padding: 2px 7px;
+      text-transform: uppercase;
+    }
+
+    section h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--text);
+      margin-bottom: 16px;
+      max-width: 760px;
+    }
+
+    .section-intro {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin-bottom: 44px;
+      line-height: 1.7;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 3px solid var(--accent);
+      margin: 52px 0;
+      padding: 20px 32px;
+      background: var(--bg-1);
+    }
+
+    .pull-quote p {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--text);
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    /* ── PLATFORM CARDS ── */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 760px) {
+      .platform-grid { grid-template-columns: 1fr; }
+    }
+
+    .platform-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px;
+    }
+
+    .platform-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .platform-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--text);
+    }
+
+    .vendor-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+
+    .platform-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 8px 16px;
+      padding: 8px 0;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.875rem;
+    }
+
+    .platform-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .platform-row-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-top: 2px;
+    }
+
+    .platform-row-value {
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .gaps-list {
+      margin-top: 4px;
+      padding-left: 16px;
+    }
+
+    .gaps-list li {
+      color: var(--red);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 2px;
+    }
+
+    /* ── STANDARDS ── */
+    .standards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 760px) {
+      .standards-grid { grid-template-columns: 1fr; }
+    }
+
+    .standard-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .standard-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .standard-name {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      padding: 2px 8px;
+    }
+
+    .status-graduated {
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    .status-published {
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+    }
+
+    .status-research {
+      color: var(--yellow);
+      border: 1px solid var(--yellow);
+    }
+
+    .status-spec {
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .standard-section {
+      margin-bottom: 10px;
+    }
+
+    .standard-section-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .standard-section p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .standard-gap {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(232, 85, 85, 0.06);
+      border-left: 2px solid var(--red);
+      border-radius: 0 2px 2px 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* ── CONTROL MATRIX ── */
+    .matrix-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 720px;
+    }
+
+    thead {
+      background: var(--bg-1);
+    }
+
+    thead th {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    thead th:first-child {
+      width: 220px;
+      color: var(--text-dim);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--bg-1);
+    }
+
+    tbody td {
+      padding: 11px 16px;
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+
+    tbody td:first-child {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .cell-yes {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .cell-partial {
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .cell-no {
+      color: var(--red);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* ── ARCHITECTURE ── */
+    .arch-block {
+      margin-bottom: 52px;
+    }
+
+    .arch-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .arch-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .arch-diagram {
+      background: var(--bg-2);
+      border: 1px solid var(--accent-dim);
+      border-radius: 4px;
+      padding: 24px 28px;
+      overflow-x: auto;
+    }
+
+    .arch-diagram pre {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #a8c7fa;
+      line-height: 1.7;
+      white-space: pre;
+    }
+
+    .arch-note {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      line-height: 1.6;
+    }
+
+    /* ── DIRA ── */
+    .dira-points {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-bottom: 44px;
+    }
+
+    .dira-point {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .dira-number {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent-dim);
+      line-height: 1;
+    }
+
+    .dira-point h3 {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .dira-point p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .dira-cta {
+      margin-top: 20px;
+      padding: 20px 24px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .dira-cta a {
+      color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .footer-back {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    /* ── UTILITIES ── */
+    .mono { font-family: var(--font-mono); }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1px 6px;
+      color: #a8c7fa;
+    }
+
+    /* ── BODY TEXT COLOR FIX ── */
+    body { color: #e6edf3; }
+    p { color: #e6edf3; }
+    li { color: #e6edf3; }
+    .section-intro { color: #c9d3de; }
+    .card p { color: #c9d3de; }
+    .platform-row-value { color: #c9d3de; }
+    .gaps-list li { color: var(--red); }
+    .standard-section p { color: #c9d3de; }
+    .standard-gap { color: #c9d3de; }
+    .arch-note { color: #c9d3de; }
+    .dira-point p { color: #c9d3de; }
+    .dira-cta { color: #c9d3de; }
+    .footer-text { color: var(--text-dim); }
+
+    /* ── SVG DIAGRAMS ── */
+    .svg-arch-wrap {
+      background: var(--bg-2);
+      border: 1px solid var(--accent-dim);
+      border-radius: 4px;
+      padding: 20px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .svg-arch-wrap svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ── CROSS-SITE NAV ── */
+    .nav-family {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      border-left: 1px solid var(--border);
+      padding-left: 20px;
+      margin-left: 4px;
+    }
+
+    .nav-family a {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      transition: color 0.15s;
+    }
+
+    .nav-family a:hover {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    @media (max-width: 680px) {
+      .nav-family { display: none; }
+    }
+
+    /* ── TOOL SECTIONS ── */
+    .tool-section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border-light);
+      background: linear-gradient(180deg, rgba(74,158,255,0.02) 0%, transparent 50%);
+    }
+
+    /* ── ARCH WIZARD ── */
+    #arch-wizard {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 32px;
+    }
+
+    .aw-header {
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .aw-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .aw-progress {
+      display: flex;
+      gap: 6px;
+    }
+
+    .aw-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+
+    .aw-dot.active { background: var(--accent); }
+    .aw-dot.done { background: var(--green); }
+
+    .aw-body { padding: 28px 24px; }
+
+    .aw-question { display: none; }
+    .aw-question.active { display: block; }
+
+    .aw-q-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .aw-q-text {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .aw-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .aw-option {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      color: #e6edf3;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: var(--font-sans);
+    }
+
+    .aw-option:hover { border-color: var(--accent); }
+    .aw-option.selected { border-color: var(--accent); background: rgba(74,158,255,0.07); }
+
+    .aw-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .aw-btn {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 3px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .aw-btn:hover { background: var(--accent); color: #0a0d10; }
+    .aw-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .aw-btn-back { border-color: var(--border); color: var(--text-muted); }
+    .aw-btn-back:hover { background: var(--bg-1); color: var(--text); }
+
+    .aw-result { display: none; padding: 28px 24px; border-top: 1px solid var(--border); }
+    .aw-result.active { display: block; }
+
+    .aw-result-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .aw-result-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .aw-result-desc {
+      font-size: 0.9rem;
+      color: #c9d3de;
+      margin-bottom: 20px;
+      line-height: 1.65;
+    }
+
+    .aw-controls-block {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+    }
+
+    .aw-controls-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .aw-controls-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .aw-controls-list li {
+      font-size: 0.875rem;
+      color: #e6edf3;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .aw-controls-list li:last-child { border-bottom: none; }
+
+    .aw-ctrl-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    /* Pre-built SVG diagram variants for arch wizard */
+    .arch-variant { display: none; }
+    .arch-variant.active { display: block; }
+
+    /* ── NHI SCORECARD ── */
+    #nhi-scorecard {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 32px;
+    }
+
+    .sc-header {
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+
+    .sc-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .sc-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .sc-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 680px) {
+      .sc-body { grid-template-columns: 1fr; }
+    }
+
+    .sc-questions { padding: 20px 24px; border-right: 1px solid var(--border); }
+
+    @media (max-width: 680px) {
+      .sc-questions { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    .sc-q-block { margin-bottom: 18px; }
+
+    .sc-q-text {
+      font-size: 0.875rem;
+      color: #e6edf3;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .sc-options {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sc-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .sc-radio {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .sc-option.selected .sc-radio {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .sc-option-label {
+      font-size: 0.82rem;
+      color: #c9d3de;
+    }
+
+    .sc-result { padding: 20px 24px; }
+
+    .sc-result-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .sc-placeholder {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .sc-score-display {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .sc-score-number {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .sc-score-number.low { color: var(--green); }
+    .sc-score-number.medium { color: #d4a017; }
+    .sc-score-number.high { color: #e8803b; }
+    .sc-score-number.critical { color: var(--red); }
+
+    .sc-score-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .sc-score-label.low { color: var(--green); }
+    .sc-score-label.medium { color: #d4a017; }
+    .sc-score-label.high { color: #e8803b; }
+    .sc-score-label.critical { color: var(--red); }
+
+    .sc-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
+
+    .sc-bar-fill {
+      height: 6px;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .sc-rec-item {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+    }
+
+    .sc-rec-owasp {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    .sc-rec-text { color: #c9d3de; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          <span>cyberdaemon.ai</span> / agentic identity
+        </div>
+        <ul class="nav-links">
+          <li><a href="#problem">Problem</a></li>
+          <li><a href="#platforms">Platforms</a></li>
+          <li><a href="#standards">Standards</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#dira">DIRA</a></li>
+          <li><a href="#arch-wizard-section">Arch Wizard</a></li>
+          <li><a href="#nhi-scorecard-section">NHI Score</a></li>
+        </ul>
+        <ul class="nav-family">
+          <li><a href="https://cyberdaemon.ai">cyberdaemon.ai</a></li>
+          <li><a href="https://harnesses.cyberdaemon.ai">harnesses</a></li>
+          <li><a href="https://cyberdaemon.ai/dira">DIRA</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-label">cyberdaemon.ai / security reference</div>
+        <h1>Securing Agentic Identity</h1>
+        <p class="hero-subtitle">
+          What commercial platforms give you, what open standards add, and what none of them address yet.
+        </p>
+        <div class="hero-levels">
+          <span class="level-pill">200 / Concepts</span>
+          <span class="level-pill">300 / Architecture</span>
+          <span class="level-pill">400 / Research</span>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-number">3</span>
+            <span class="hero-stat-label">major platforms</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-number">6</span>
+            <span class="hero-stat-label">open standards</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-number">1</span>
+            <span class="hero-stat-label">unaddressed gap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01: PROBLEM -->
+  <section id="problem">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">01 / The Problem Space</span>
+        <span class="level-badge">200</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Traditional IAM assumes the principal is a human. Agentic AI breaks that assumption at every layer.</h2>
+      <p class="section-intro">
+        The tools exist. The frameworks exist. The problem is that none of them were designed for a principal that spawns sub-principals, holds persistent memory across sessions, calls external tools autonomously, and can be prompted into acting outside its declared purpose.
+      </p>
+
+      <div class="card-grid">
+
+        <div class="card">
+          <div class="card-title">Credential Sprawl</div>
+          <p>Each agent, service connection, and tool integration creates a new identity. Enterprise deployments generate hundreds of non-human credentials with no lifecycle management. When the agent is decommissioned, the credentials often are not.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Absent Scope Binding</div>
+          <p>Platforms issue credentials at service level, not session level. A customer service agent runs with the same credential whether answering an FAQ or attempting a database write. The session intent is invisible to the authorization system.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Delegation Chain Collapse</div>
+          <p>When Agent A delegates to Agent B, which delegates to Agent C: which principal authorized C's action? Existing IAM models assume one authorization event per session, not a chain. Multi-agent systems blow past this assumption constantly.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Persistent State Authorization</div>
+          <p>Agent memory persists across sessions. No platform has an authorization model for reads and writes to that memory. What governs which agent can write what to a shared memory store? Currently: nothing formal.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Behavioral Drift</div>
+          <p>An agent's declared intent ("I will summarize emails") may diverge from observed behavior at runtime. Static credentials cannot detect or block this drift. By the time a log surfaces an anomaly, the action has already executed.</p>
+        </div>
+
+      </div>
+
+      <div class="pull-quote">
+        <p>"The question is not just who this agent is. It is whether this agent is doing what it said it would do, within the scope it was granted, right now."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02: PLATFORMS -->
+  <section id="platforms">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">02 / Commercial Platform Coverage</span>
+        <span class="level-badge">300</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>What the major platforms actually give you</h2>
+      <p class="section-intro">
+        Each platform below has a real identity model. None of them solve the session-scope binding problem or behavioral authorization. That is not a criticism, it is an accurate description of the current state.
+      </p>
+
+      <div class="platform-grid">
+
+        <!-- Microsoft Copilot / AI Foundry -->
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-name">Microsoft Copilot / AI Foundry</div>
+            <span class="vendor-badge">Microsoft</span>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Identity Model</div>
+            <div class="platform-row-value">Microsoft Entra ID. Agents run as managed identities or service principals. Delegated permissions allow agents to act on behalf of users within defined OAuth scopes.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Credential Type</div>
+            <div class="platform-row-value">Managed Identity tokens (Azure AD). Short-lived (~1hr), auto-rotated by the platform.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Scope Binding</div>
+            <div class="platform-row-value">OAuth 2.0 scopes at service level. Copilot Studio connectors use separate connection credentials per connector type.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Delegation</div>
+            <div class="platform-row-value">Delegated permissions chain through Entra. Multi-agent: sequential handoff via Teams channel or direct API with service principal.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Audit</div>
+            <div class="platform-row-value">Microsoft Sentinel, Entra audit logs, Purview activity tracking.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Gaps</div>
+            <div class="platform-row-value">
+              <ul class="gaps-list">
+                <li>No per-session intent binding</li>
+                <li>Scope is service-level, not action-level</li>
+                <li>No behavioral authorization model</li>
+                <li>Copilot Studio connector credentials often long-lived in practice</li>
+                <li>No NHI offboarding workflow for decommissioned agents</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- AWS Bedrock Agents -->
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-name">AWS Bedrock Agents</div>
+            <span class="vendor-badge">Amazon</span>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Identity Model</div>
+            <div class="platform-row-value">IAM execution roles assigned to each agent. Knowledge base access via S3 bucket policies. Lambda action groups carry their own IAM roles.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Credential Type</div>
+            <div class="platform-row-value">STS-issued temporary credentials via AssumeRole. Short-lived by default.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Scope Binding</div>
+            <div class="platform-row-value">IAM policies with resource-level conditions. No native concept of agent session scope. The role governs all actions regardless of session context.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Delegation</div>
+            <div class="platform-row-value">Inline agents (supervisor pattern) invoke sub-agents. Each sub-agent uses its own execution role; the supervisor role needs a trust policy to assume sub-agent roles.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Audit</div>
+            <div class="platform-row-value">CloudTrail (all API calls), Bedrock model invocation logging, optional S3 access logging.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Gaps</div>
+            <div class="platform-row-value">
+              <ul class="gaps-list">
+                <li>No session-level scope restriction</li>
+                <li>IAM policies are static; no runtime intent classification</li>
+                <li>Multi-agent role chains are difficult to audit end-to-end</li>
+                <li>No behavioral drift detection</li>
+                <li>Action group Lambda functions are separately governed and easily misconfigured</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Vertex AI Agents -->
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-name">Google Vertex AI Agents</div>
+            <span class="vendor-badge">Google</span>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Identity Model</div>
+            <div class="platform-row-value">GCP service accounts. Agent Builder (Dialogflow CX) uses per-agent service accounts with Workload Identity Federation available.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Credential Type</div>
+            <div class="platform-row-value">Service account keys or Workload Identity Federation tokens. WIF tokens are short-lived and keyless.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Scope Binding</div>
+            <div class="platform-row-value">GCP IAM roles and conditions. Resource-level control. VPC Service Controls add a network-level boundary.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Delegation</div>
+            <div class="platform-row-value">Tool use within a single agent session. Multi-agent via Reasoning Engine (Vertex AI): each sub-call uses the orchestrator's service account unless explicitly configured otherwise.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Audit</div>
+            <div class="platform-row-value">Cloud Audit Logs (Data Access, System Event, Policy Denied), Cloud Logging, BigQuery export.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Gaps</div>
+            <div class="platform-row-value">
+              <ul class="gaps-list">
+                <li>No native multi-agent identity segmentation</li>
+                <li>Single orchestrator service account often used for all sub-calls</li>
+                <li>No session intent binding</li>
+                <li>No behavioral authorization layer</li>
+                <li>WIF setup is non-trivial; many teams default to service account keys</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Microsoft Copilot Studio -->
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-name">Microsoft Copilot Studio</div>
+            <span class="vendor-badge">Microsoft</span>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Identity Model</div>
+            <div class="platform-row-value">Connector-based. Each connector (SharePoint, Salesforce, etc.) has its own credential store. Bot Framework service principal handles channel authentication.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Credential Type</div>
+            <div class="platform-row-value">OAuth 2.0 tokens per connector, often with refresh tokens stored in the platform. Bot channel uses Azure Bot Service registration.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Scope Binding</div>
+            <div class="platform-row-value">Defined at connector configuration time. No runtime scope adjustment.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Delegation</div>
+            <div class="platform-row-value">Via Topics and Power Automate flows. Power Automate flows run under the connector user's credentials or a service account.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Audit</div>
+            <div class="platform-row-value">Power Platform admin center, Azure AD sign-in logs per connector.</div>
+          </div>
+          <div class="platform-row">
+            <div class="platform-row-label">Gaps</div>
+            <div class="platform-row-value">
+              <ul class="gaps-list">
+                <li>Heavy reliance on long-lived OAuth refresh tokens</li>
+                <li>No unified NHI inventory across connectors</li>
+                <li>Power Automate service accounts often carry broad permissions</li>
+                <li>No behavioral authorization model</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 03: STANDARDS -->
+  <section id="standards">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">03 / Open Standards</span>
+        <span class="level-badge">300</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>What open standards contribute</h2>
+      <p class="section-intro">
+        The standards below are the best currently available. Some are production-ready. Some are research proposals. All of them cover pieces of the problem. None cover the full stack.
+      </p>
+
+      <div class="standards-grid">
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">SPIFFE / SPIRE</span>
+            <span class="status-badge status-graduated">CNCF Graduated</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Secure Production Identity Framework for Everyone. X.509-based workload identity. SPIRE is the reference implementation.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Mechanism</div>
+            <p>Node and workload attestation. SVID issuance (X.509 or JWT). Short-lived certificates (default 1hr). Automatic rotation. Trust bundle federation across clusters.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Agent Identity Use</div>
+            <p>Issue a unique SVID per agent workload. Workload attestation ties identity to the deployment, not just the process. SVIDs expire automatically, no manual rotation needed.</p>
+          </div>
+          <div class="standard-gap">
+            Covers identity issuance and workload attestation. Does not address behavioral authorization or session-level scope binding.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">A2A Protocol (Google)</span>
+            <span class="status-badge status-spec">Open Spec / Early</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Agent-to-Agent protocol for multi-agent delegation. Defines Agent Cards (capability declarations) and delegation flows.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Mechanism</div>
+            <p>Agent Cards describe what an agent can do. Delegation passes a task plus context to a sub-agent with declared scope. Sub-agent responds with result.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Agent Identity Use</div>
+            <p>Delegation chain traceability. The delegating agent declares the scope granted to the sub-agent.</p>
+          </div>
+          <div class="standard-gap">
+            Delegation is declarative, not enforced at runtime. No published eval suite for scope boundary enforcement. Fast-moving spec, no stable release.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">Mission-Bound OAuth (McGuinness)</span>
+            <span class="status-badge status-research">Research Proposal</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Extension to OAuth 2.0 for agentic systems. Credentials bound to a declared mission at issuance time.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Mechanism</div>
+            <p>Access tokens include a mission claim specifying the authorized purpose. Token validation checks declared mission against the requested action at the resource server.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Agent Identity Use</div>
+            <p>An agent presents a token with <code>mission="process-expense-reports"</code>. Any action outside that scope is rejectable at the resource server.</p>
+          </div>
+          <div class="standard-gap">
+            Requires resource servers to validate mission claims. No widely adopted implementation. No IETF standardization process underway.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">OWASP NHI Top 10</span>
+            <span class="status-badge status-published">OWASP 2025</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Top 10 security risks specific to Non-Human Identities. Directly applicable to agent identity management.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Key Risks</div>
+            <p>NHI1 (improper offboarding), NHI2 (secret sprawl), NHI3 (overprivileged NHI), NHI7 (long-lived secrets), NHI9 (NHI reuse), NHI10 (human use of NHI). NHI3 and NHI7 are the most common agent identity failures seen in production.</p>
+          </div>
+          <div class="standard-gap">
+            Descriptive, not prescriptive. Identifies risks without mandating controls or architectures. Useful for gap analysis, not implementation.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">OWASP Agentic AI Top 10</span>
+            <span class="status-badge status-published">OWASP 2026</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Top 10 risks specific to agentic AI systems.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Key Risks</div>
+            <p>ASI01 (agent objective hijacking), ASI02 (tool misuse), ASI04 (excessive autonomy), ASI07 (multi-agent trust collapse), ASI08 (unauthorized data access), ASI09 (irreversible action), ASI10 (insufficient audit trail). ASI07 maps directly to the delegation chain gap.</p>
+          </div>
+          <div class="standard-gap">
+            Descriptive risk taxonomy. No prescriptive authorization architecture. Pairs well with OWASP NHI Top 10 for a full risk picture.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <span class="standard-name">Singapore MGF (IMDA, 2026)</span>
+            <span class="status-badge status-published">Framework</span>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">What it is</div>
+            <p>Model Governance Framework, January 2026 edition. The most forward-looking agentic governance treatment in any major published framework to date.</p>
+          </div>
+          <div class="standard-section">
+            <div class="standard-section-label">Four Pillars</div>
+            <p>Principal Hierarchy, Scoped Permissions, Minimal Footprint, Auditable Decisions. Principal Hierarchy directly addresses multi-agent authorization chains. Scoped Permissions requires session-level scope binding, not service-level.</p>
+          </div>
+          <div class="standard-gap">
+            Framework-level guidance only. No implementation specification. Vendors have not adopted it as of early 2026.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 04: CONTROL MATRIX -->
+  <section id="matrix">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">04 / What You Actually Get</span>
+        <span class="level-badge">300</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Control matrix across platforms and standards</h2>
+      <p class="section-intro">
+        The columns below represent what each platform or standard provides today. Partial means: the capability exists but has meaningful gaps in agentic contexts.
+      </p>
+
+      <div class="matrix-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Control</th>
+              <th>Copilot / AI Foundry</th>
+              <th>Bedrock</th>
+              <th>Vertex AI</th>
+              <th>Copilot Studio</th>
+              <th>SPIFFE+SPIRE</th>
+              <th>DIRA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Short-lived credentials</td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Automatic credential rotation</td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Per-session scope binding</td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Agent delegation traceability</td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Behavioral drift detection</td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>Runtime intent enforcement</td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td>NHI inventory / offboarding</td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+            </tr>
+            <tr>
+              <td>Audit trail (action-level)</td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+              <td><span class="cell-partial">&#9651;</span></td>
+              <td><span class="cell-no">&#10007;</span></td>
+              <td><span class="cell-yes">&#10003;</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top: 16px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);">
+        <span style="color: var(--green);">&#10003;</span> Yes &nbsp;&nbsp;
+        <span style="color: var(--yellow);">&#9651;</span> Partial &nbsp;&nbsp;
+        <span style="color: var(--red);">&#10007;</span> No
+      </p>
+    </div>
+  </section>
+
+  <!-- 05: ARCHITECTURES -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">05 / Reference Architectures</span>
+        <span class="level-badge">400</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Three patterns worth implementing</h2>
+      <p class="section-intro">
+        These are not vendor-specific. They apply the controls from the sections above into implementable patterns. Start with Architecture 1, add Architecture 2 when you introduce multi-agent orchestration, add Architecture 3 for any irreversible or high-impact action.
+      </p>
+
+      <div class="arch-block">
+        <div class="arch-title">Architecture 1: Single Agent with SPIFFE + Scoped Session Token</div>
+        <div class="svg-arch-wrap">
+          <svg viewBox="0 0 680 400" width="680" height="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Single agent architecture with SPIFFE SVID and scoped session token">
+            <defs>
+              <marker id="a1arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+              </marker>
+              <marker id="a1deny" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#e85555"/>
+              </marker>
+            </defs>
+
+            <!-- User Request -->
+            <rect x="220" y="10" width="240" height="44" rx="4" fill="#111418" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="340" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#4a9eff" letter-spacing="0.1em">USER REQUEST</text>
+            <text x="340" y="44" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">natural language input</text>
+            <line x1="340" y1="54" x2="340" y2="72" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a1arr)"/>
+
+            <!-- API Gateway -->
+            <rect x="180" y="74" width="320" height="52" rx="4" fill="#111418" stroke="#3dba6f" stroke-width="1.5"/>
+            <text x="340" y="93" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f" letter-spacing="0.1em">API GATEWAY</text>
+            <text x="340" y="109" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">validates user identity via Entra / Cognito / IdP</text>
+            <text x="340" y="122" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">issues session scope token bound to declared intent</text>
+            <line x1="340" y1="126" x2="340" y2="144" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a1arr)"/>
+
+            <!-- Agent Runtime -->
+            <rect x="140" y="146" width="400" height="66" rx="4" fill="#111418" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="340" y="165" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#4a9eff" letter-spacing="0.1em">AGENT RUNTIME</text>
+            <rect x="160" y="174" width="170" height="28" rx="3" fill="#181d23" stroke="#252b33"/>
+            <text x="245" y="187" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9.5" fill="#c9d3de">SPIFFE SVID (workload attestation)</text>
+            <text x="245" y="199" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">issued at startup, auto-rotated</text>
+            <rect x="350" y="174" width="170" height="28" rx="3" fill="#181d23" stroke="#252b33"/>
+            <text x="435" y="187" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9.5" fill="#c9d3de">Session Scope Token</text>
+            <text x="435" y="199" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">scoped to this session intent</text>
+
+            <!-- Tool arrows -->
+            <line x1="280" y1="212" x2="200" y2="260" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#a1arr)"/>
+            <line x1="340" y1="212" x2="340" y2="260" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#a1arr)"/>
+            <line x1="400" y1="212" x2="480" y2="260" stroke="#e85555" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#a1deny)"/>
+
+            <!-- Tool boxes -->
+            <rect x="90" y="262" width="160" height="40" rx="3" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.2"/>
+            <text x="170" y="278" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" font-weight="600" fill="#e6edf3">Read-Only DB Query</text>
+            <text x="170" y="294" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f">scope: ALLOW</text>
+
+            <rect x="260" y="262" width="160" height="40" rx="3" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.2"/>
+            <text x="340" y="278" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" font-weight="600" fill="#e6edf3">Email Send</text>
+            <text x="340" y="294" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f">scope: ALLOW</text>
+
+            <rect x="430" y="262" width="160" height="40" rx="3" fill="#1e0e0e" stroke="#e85555" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <text x="510" y="278" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" font-weight="600" fill="#e6edf3">File Delete</text>
+            <text x="510" y="294" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#e85555">scope: DENY</text>
+
+            <!-- Audit Log -->
+            <line x1="170" y1="302" x2="170" y2="328" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="340" y1="302" x2="340" y2="328" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="170" y1="328" x2="340" y2="328" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="255" y1="328" x2="255" y2="348" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#a1arr)"/>
+
+            <rect x="60" y="350" width="520" height="36" rx="4" fill="#111418" stroke="#252b33"/>
+            <text x="320" y="366" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#8a95a3" letter-spacing="0.08em">AUDIT LOG: action / principal / scope / outcome / timestamp</text>
+            <text x="320" y="381" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">full chain captured per action, not per session</text>
+          </svg>
+        </div>
+        <p class="arch-note">
+          The SVID establishes workload identity. The session scope token restricts what the workload can do within this specific session. Both are short-lived. The combination enforces least privilege at the session level, not just the service level.
+        </p>
+      </div>
+
+      <div class="arch-block">
+        <div class="arch-title">Architecture 2: Multi-Agent Delegation Chain with Scoped Sub-Tokens</div>
+        <div class="svg-arch-wrap">
+          <svg viewBox="0 0 680 370" width="680" height="370" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Multi-agent delegation chain with scoped sub-tokens">
+            <defs>
+              <marker id="a2arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+              </marker>
+            </defs>
+
+            <!-- Identity Plane label -->
+            <rect x="10" y="8" width="120" height="20" rx="3" fill="transparent"/>
+            <text x="14" y="22" font-family="'Courier New',monospace" font-size="8" fill="#3dba6f" letter-spacing="0.1em">IDENTITY PLANE</text>
+            <rect x="550" y="8" width="120" height="20" rx="3" fill="transparent"/>
+            <text x="554" y="22" font-family="'Courier New',monospace" font-size="8" fill="#4a9eff" letter-spacing="0.1em">SCOPE PLANE</text>
+
+            <!-- Orchestrator -->
+            <rect x="160" y="30" width="360" height="56" rx="4" fill="#111418" stroke="#7c6af7" stroke-width="1.5"/>
+            <text x="340" y="50" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#7c6af7" letter-spacing="0.1em">ORCHESTRATOR AGENT</text>
+            <text x="340" y="66" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">svid://cluster/orchestrator</text>
+            <text x="340" y="80" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">full session scope: read-invoices, call-payment-api, write-ledger</text>
+
+            <!-- delegation arrow + label -->
+            <line x1="340" y1="86" x2="340" y2="116" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a2arr)"/>
+            <rect x="356" y="90" width="200" height="22" rx="3" fill="#181d23" stroke="#252b33"/>
+            <text x="456" y="99" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">passes: task context</text>
+            <text x="456" y="110" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">+ scoped sub-token (subset)</text>
+
+            <!-- Sub-Agent A -->
+            <rect x="160" y="118" width="360" height="56" rx="4" fill="#111418" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="340" y="138" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#4a9eff" letter-spacing="0.1em">SUB-AGENT A</text>
+            <text x="340" y="154" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">svid://cluster/sub-agent-a</text>
+            <text x="340" y="168" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">token grants: read-invoices, call-payment-api only</text>
+
+            <!-- to Payment API arrow -->
+            <line x1="340" y1="174" x2="340" y2="206" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a2arr)"/>
+            <rect x="356" y="178" width="200" height="22" rx="3" fill="#181d23" stroke="#252b33"/>
+            <text x="456" y="187" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">presents: sub-agent-a SVID</text>
+            <text x="456" y="198" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">+ scoped delegation token</text>
+
+            <!-- Payment API -->
+            <rect x="200" y="208" width="280" height="48" rx="4" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.5"/>
+            <text x="340" y="228" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f" letter-spacing="0.1em">PAYMENT API (Resource Server)</text>
+            <text x="340" y="244" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">validates: SVID + delegation token + scope</text>
+            <text x="340" y="252" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">sub-agent cannot exceed orchestrator scope</text>
+
+            <line x1="340" y1="256" x2="340" y2="278" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a2arr)"/>
+
+            <!-- Audit -->
+            <rect x="60" y="280" width="560" height="48" rx="4" fill="#111418" stroke="#252b33"/>
+            <text x="340" y="298" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#8a95a3" letter-spacing="0.08em">AUDIT RECORD</text>
+            <text x="340" y="314" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">orchestrator → sub-agent-a → payment-api</text>
+            <text x="340" y="326" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">scope at each hop / token expiry / outcome / timestamp</text>
+
+            <!-- Scope cannot-exceed annotation -->
+            <rect x="10" y="120" width="140" height="52" rx="3" fill="rgba(61,186,111,0.06)" stroke="#3dba6f" stroke-width="1"/>
+            <text x="80" y="138" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#3dba6f">Sub-token is strict</text>
+            <text x="80" y="150" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#3dba6f">subset of parent.</text>
+            <text x="80" y="162" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#3dba6f">Cannot be elevated.</text>
+          </svg>
+        </div>
+        <p class="arch-note">
+          Each hop in the chain carries only the scope it was granted. The sub-agent cannot exceed the orchestrator's scope, and the resource server validates both the SVID and the delegation token. The audit record captures the full chain, not just the leaf action.
+        </p>
+      </div>
+
+      <div class="arch-block">
+        <div class="arch-title">Architecture 3: Human-in-the-Loop Approval Gate for Irreversible Actions</div>
+        <div class="svg-arch-wrap">
+          <svg viewBox="0 0 680 440" width="680" height="440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Human-in-the-loop approval gate for irreversible agent actions">
+            <defs>
+              <marker id="a3arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+              </marker>
+              <marker id="a3deny" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#e85555"/>
+              </marker>
+              <marker id="a3ok" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#3dba6f"/>
+              </marker>
+            </defs>
+
+            <!-- Agent proposes action -->
+            <rect x="140" y="10" width="400" height="44" rx="4" fill="#111418" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="340" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#4a9eff" letter-spacing="0.1em">AGENT PROPOSES ACTION</text>
+            <text x="340" y="44" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">"Delete 847 records matching criteria X"</text>
+            <line x1="340" y1="54" x2="340" y2="74" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a3arr)"/>
+
+            <!-- DIRA Policy Engine -->
+            <rect x="120" y="76" width="440" height="66" rx="4" fill="#111418" stroke="#7c6af7" stroke-width="1.5"/>
+            <text x="340" y="95" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#7c6af7" letter-spacing="0.1em">DIRA POLICY ENGINE</text>
+            <text x="340" y="112" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">compares: declared session intent vs. proposed action</text>
+            <text x="340" y="128" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">flags: irreversible / high-impact / outside session pattern</text>
+            <line x1="340" y1="142" x2="340" y2="162" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#a3arr)"/>
+
+            <!-- Human Approval Gate -->
+            <rect x="120" y="164" width="440" height="66" rx="4" fill="#111418" stroke="#d4a017" stroke-width="1.5"/>
+            <text x="340" y="183" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#d4a017" letter-spacing="0.1em">HUMAN APPROVAL GATE</text>
+            <text x="340" y="200" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">notifies approver via Slack / email / ticketing</text>
+            <text x="340" y="216" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">timeout: 4 hours, then ABORT (no default-allow on timeout)</text>
+
+            <!-- Branch: deny or approve -->
+            <line x1="200" y1="230" x2="140" y2="260" stroke="#e85555" stroke-width="1.3" marker-end="url(#a3deny)"/>
+            <line x1="480" y1="230" x2="540" y2="260" stroke="#3dba6f" stroke-width="1.3" marker-end="url(#a3ok)"/>
+
+            <!-- Timeout / abort -->
+            <rect x="40" y="262" width="160" height="36" rx="3" fill="#1e0e0e" stroke="#e85555" stroke-width="1.2"/>
+            <text x="120" y="278" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#e85555">TIMEOUT = ABORT</text>
+            <text x="120" y="292" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">action does not execute</text>
+
+            <!-- Approved path -->
+            <rect x="480" y="262" width="160" height="36" rx="3" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.2"/>
+            <text x="560" y="278" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f">EXPLICIT APPROVAL</text>
+            <text x="560" y="292" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">by named approver</text>
+
+            <line x1="560" y1="298" x2="560" y2="318" stroke="#3dba6f" stroke-width="1.3" marker-end="url(#a3ok)"/>
+
+            <!-- Time-Bound Execution Token -->
+            <rect x="380" y="320" width="300" height="52" rx="4" fill="#111418" stroke="#3dba6f" stroke-width="1.5"/>
+            <text x="530" y="338" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f" letter-spacing="0.08em">TIME-BOUND EXECUTION TOKEN</text>
+            <text x="530" y="354" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9.5" fill="#c9d3de">expires: 4hr or action completion</text>
+            <text x="530" y="366" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">scoped to this specific action only</text>
+
+            <line x1="530" y1="372" x2="530" y2="392" stroke="#3dba6f" stroke-width="1.3" marker-end="url(#a3ok)"/>
+            <line x1="530" y1="392" x2="340" y2="392" stroke="#3dba6f" stroke-width="1.3" marker-end="url(#a3ok)"/>
+
+            <!-- Audit -->
+            <rect x="60" y="394" width="560" height="36" rx="4" fill="#111418" stroke="#252b33"/>
+            <text x="340" y="410" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#8a95a3" letter-spacing="0.08em">AUDIT: proposal / approver identity / execution token / outcome / timestamp</text>
+            <text x="340" y="424" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#5a6370">full chain: who proposed, who approved, what authorized, what executed</text>
+          </svg>
+        </div>
+        <p class="arch-note">
+          The approval gate fires before the irreversible step. Timeout defaults to abort, not execute. The execution token is scoped to the specific approved action, not the full session. The audit trail captures the full approval chain: who proposed, who approved, what was authorized, what executed.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 06: DIRA -->
+  <section id="dira">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">06 / The Unaddressed Gap</span>
+        <span class="level-badge">400</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Every platform above covers credential management. None cover behavioral authorization.</h2>
+      <p class="section-intro">
+        That is the gap. Not a missing feature, not a roadmap item. An architectural category that does not exist in any commercial platform or finalized standard today.
+      </p>
+
+      <div class="dira-points">
+
+        <div class="dira-point">
+          <div class="dira-number">1</div>
+          <div>
+            <h3>Static credentials cannot enforce dynamic intent</h3>
+            <p>
+              SPIFFE issues the identity. IAM binds the scope. Neither evaluates whether the agent's action in this moment, in this context, matches the declared purpose of the session. A customer service agent with read-and-write credentials is authorized to write. But not to write to this record, in response to this prompt, at this step in this workflow. That distinction does not exist in any current system.
+            </p>
+          </div>
+        </div>
+
+        <div class="dira-point">
+          <div class="dira-number">2</div>
+          <div>
+            <h3>Behavioral authorization is per-request, not per-issuance</h3>
+            <p>
+              DIRA (Dual-Intent Runtime Authorization) evaluates three signals per action: (a) what the agent declared it would do at session start, (b) what action it is attempting to take right now, (c) whether the attempted action falls within the authorized scope for this specific request. Three signals, one enforcement decision. Applied at the tool call, not at credential issuance. This is a different class of control from anything in the credential layer.
+            </p>
+          </div>
+        </div>
+
+        <div class="dira-point">
+          <div class="dira-number">3</div>
+          <div>
+            <h3>Audit without enforcement is forensics, not security</h3>
+            <p>
+              Every platform above logs. None block. There is a material difference between knowing that an agent performed an unauthorized action after the fact, and preventing the action before it executes. DIRA's enforcement mode pauses or denies the action at the point of behavioral divergence. Before the irreversible step. Not after the incident.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dira-cta">
+        This is ongoing research. The behavioral authorization problem is solvable, and the architecture for solving it is the subject of active work at <a href="https://cyberdaemon.ai">cyberdaemon.ai</a>. Follow the thread there.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE WIZARD -->
+  <section class="tool-section" id="arch-wizard-section">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Tool / Architecture Wizard</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>Secure My Agents: Architecture Wizard</h2>
+      <p class="section-intro">
+        Five questions about your deployment context. Get a recommended identity and authorization architecture pattern with the relevant components for your situation.
+      </p>
+
+      <div id="arch-wizard">
+        <div class="aw-header">
+          <span class="aw-title">Architecture Wizard</span>
+          <div class="aw-progress">
+            <div class="aw-dot active" id="awd1"></div>
+            <div class="aw-dot" id="awd2"></div>
+            <div class="aw-dot" id="awd3"></div>
+            <div class="aw-dot" id="awd4"></div>
+            <div class="aw-dot" id="awd5"></div>
+          </div>
+        </div>
+        <div class="aw-body">
+
+          <div class="aw-question active" id="awq1">
+            <span class="aw-q-label">Question 1 of 5</span>
+            <p class="aw-q-text">Where is your deployment?</p>
+            <div class="aw-options">
+              <button class="aw-option" data-q="1" data-v="aws">AWS</button>
+              <button class="aw-option" data-q="1" data-v="azure">Azure</button>
+              <button class="aw-option" data-q="1" data-v="gcp">GCP</button>
+              <button class="aw-option" data-q="1" data-v="onprem">On-premise</button>
+              <button class="aw-option" data-q="1" data-v="multi">Multi-cloud or hybrid</button>
+              <button class="aw-option" data-q="1" data-v="edge">Edge or on-device</button>
+            </div>
+            <div class="aw-nav">
+              <button class="aw-btn" id="awq1-next" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="aw-question" id="awq2">
+            <span class="aw-q-label">Question 2 of 5</span>
+            <p class="aw-q-text">Are your agents using commercial platforms (Bedrock, Copilot, Vertex) or open/custom infrastructure?</p>
+            <div class="aw-options">
+              <button class="aw-option" data-q="2" data-v="commercial">Commercial platform (Bedrock, Copilot, Vertex)</button>
+              <button class="aw-option" data-q="2" data-v="custom">Open or custom (LangChain, custom harness, self-hosted)</button>
+              <button class="aw-option" data-q="2" data-v="both">Mix of commercial and custom</button>
+            </div>
+            <div class="aw-nav">
+              <button class="aw-btn aw-btn-back" id="awq2-back">Back</button>
+              <button class="aw-btn" id="awq2-next" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="aw-question" id="awq3">
+            <span class="aw-q-label">Question 3 of 5</span>
+            <p class="aw-q-text">Do your agents call external APIs, databases, or other agents?</p>
+            <div class="aw-options">
+              <button class="aw-option" data-q="3" data-v="no">No, agents operate within a single system boundary</button>
+              <button class="aw-option" data-q="3" data-v="external">Yes, external APIs or databases</button>
+              <button class="aw-option" data-q="3" data-v="multiagent">Yes, other agents (multi-agent pipeline)</button>
+              <button class="aw-option" data-q="3" data-v="all">Yes, all of the above</button>
+            </div>
+            <div class="aw-nav">
+              <button class="aw-btn aw-btn-back" id="awq3-back">Back</button>
+              <button class="aw-btn" id="awq3-next" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="aw-question" id="awq4">
+            <span class="aw-q-label">Question 4 of 5</span>
+            <p class="aw-q-text">Do you need cryptographic workload attestation (SPIFFE/SPIRE level)?</p>
+            <div class="aw-options">
+              <button class="aw-option" data-q="4" data-v="yes">Yes, regulatory or security requirement</button>
+              <button class="aw-option" data-q="4" data-v="maybe">Useful but not mandated</button>
+              <button class="aw-option" data-q="4" data-v="no">No, platform-managed credentials are sufficient</button>
+            </div>
+            <div class="aw-nav">
+              <button class="aw-btn aw-btn-back" id="awq4-back">Back</button>
+              <button class="aw-btn" id="awq4-next" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="aw-question" id="awq5">
+            <span class="aw-q-label">Question 5 of 5</span>
+            <p class="aw-q-text">Is runtime behavioral authorization a requirement in your security model?</p>
+            <div class="aw-options">
+              <button class="aw-option" data-q="5" data-v="yes">Yes, we need to validate agent behavior against declared intent at runtime</button>
+              <button class="aw-option" data-q="5" data-v="maybe">Interested but not a current requirement</button>
+              <button class="aw-option" data-q="5" data-v="no">No, static credential controls are sufficient</button>
+            </div>
+            <div class="aw-nav">
+              <button class="aw-btn aw-btn-back" id="awq5-back">Back</button>
+              <button class="aw-btn" id="awq5-submit" disabled>See Architecture</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden SVG diagram variants -->
+        <div style="display:none;">
+          <div id="arch-svg-simple"><!-- Platform-only / simple -->
+            <svg viewBox="0 0 560 200" width="560" height="200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="160" height="40" rx="3" fill="#111418" stroke="#4a9eff" stroke-width="1.2"/>
+              <text x="90" y="27" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#4a9eff">AGENT RUNTIME</text>
+              <text x="90" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">Platform Identity</text>
+              <line x1="170" y1="30" x2="210" y2="30" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#a3ok)"/>
+              <rect x="212" y="10" width="160" height="40" rx="3" fill="#111418" stroke="#3dba6f" stroke-width="1.2"/>
+              <text x="292" y="27" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3dba6f">PLATFORM IAM</text>
+              <text x="292" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">IAM Role / Managed ID</text>
+              <line x1="372" y1="30" x2="412" y2="30" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#a3ok)"/>
+              <rect x="414" y="10" width="136" height="40" rx="3" fill="#111418" stroke="#252b33" stroke-width="1.2"/>
+              <text x="482" y="27" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#8a95a3">RESOURCE</text>
+              <text x="482" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">API / DB / Service</text>
+              <rect x="10" y="80" width="540" height="30" rx="3" fill="#111418" stroke="#252b33"/>
+              <text x="280" y="97" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">Platform audit log captures all actions</text>
+              <text x="280" y="140" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#8a95a3">Pattern: Platform-native identity. Least operational overhead. Gaps: session scope, behavioral auth.</text>
+            </svg>
+          </div>
+          <div id="arch-svg-spiffe"><!-- SPIFFE tier -->
+            <svg viewBox="0 0 600 240" width="600" height="240" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="140" height="44" rx="3" fill="#111418" stroke="#7c6af7" stroke-width="1.2"/>
+              <text x="80" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#7c6af7">SPIRE SERVER</text>
+              <text x="80" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">issues SVIDs</text>
+              <text x="80" y="52" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="8" fill="#5a6370">node + workload attest</text>
+              <line x1="150" y1="32" x2="190" y2="32" stroke="#7c6af7" stroke-width="1.2"/>
+              <rect x="192" y="10" width="160" height="44" rx="3" fill="#111418" stroke="#4a9eff" stroke-width="1.2"/>
+              <text x="272" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#4a9eff">AGENT RUNTIME</text>
+              <text x="272" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">SVID-authenticated</text>
+              <text x="272" y="52" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="8" fill="#5a6370">session scope token</text>
+              <line x1="352" y1="32" x2="392" y2="32" stroke="#4a9eff" stroke-width="1.2"/>
+              <rect x="394" y="10" width="196" height="44" rx="3" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.2"/>
+              <text x="492" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#3dba6f">RESOURCE SERVER</text>
+              <text x="492" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">validates SVID + scope token</text>
+              <text x="492" y="52" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="8" fill="#5a6370">least-privilege enforcement</text>
+              <rect x="10" y="80" width="580" height="30" rx="3" fill="#111418" stroke="#252b33"/>
+              <text x="300" y="100" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">Pattern: Architecture 1 from Section 05. SPIFFE + session scope token.</text>
+            </svg>
+          </div>
+          <div id="arch-svg-multiagent"><!-- Multi-agent + DIRA -->
+            <svg viewBox="0 0 600 200" width="600" height="200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="160" height="44" rx="3" fill="#111418" stroke="#7c6af7" stroke-width="1.2"/>
+              <text x="90" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#7c6af7">ORCHESTRATOR</text>
+              <text x="90" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">SVID + full scope token</text>
+              <line x1="170" y1="32" x2="210" y2="32" stroke="#4a9eff" stroke-width="1.2"/>
+              <rect x="212" y="10" width="160" height="44" rx="3" fill="#111418" stroke="#4a9eff" stroke-width="1.2"/>
+              <text x="292" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#4a9eff">SUB-AGENT</text>
+              <text x="292" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">SVID + sub-scope token</text>
+              <line x1="372" y1="32" x2="412" y2="32" stroke="#4a9eff" stroke-width="1.2"/>
+              <rect x="414" y="10" width="176" height="44" rx="3" fill="#111418" stroke="#d4a017" stroke-width="1.2"/>
+              <text x="502" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#d4a017">DIRA GATE</text>
+              <text x="502" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">intent vs. execution check</text>
+              <rect x="10" y="80" width="580" height="30" rx="3" fill="#111418" stroke="#252b33"/>
+              <text x="300" y="100" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">Architecture 2 + DIRA. Multi-agent chain with per-hop behavioral enforcement.</text>
+            </svg>
+          </div>
+          <div id="arch-svg-dira"><!-- Full DIRA stack -->
+            <svg viewBox="0 0 600 200" width="600" height="200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="130" height="44" rx="3" fill="#111418" stroke="#7c6af7" stroke-width="1.2"/>
+              <text x="75" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#7c6af7">IDENTITY PLANE</text>
+              <text x="75" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">SPIFFE / SPIRE</text>
+              <line x1="140" y1="32" x2="170" y2="32" stroke="#7c6af7" stroke-width="1.2"/>
+              <rect x="172" y="10" width="130" height="44" rx="3" fill="#111418" stroke="#4a9eff" stroke-width="1.2"/>
+              <text x="237" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#4a9eff">CONTROL PLANE</text>
+              <text x="237" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">Session scope tokens</text>
+              <line x1="302" y1="32" x2="332" y2="32" stroke="#4a9eff" stroke-width="1.2"/>
+              <rect x="334" y="10" width="130" height="44" rx="3" fill="#111418" stroke="#d4a017" stroke-width="1.2"/>
+              <text x="399" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#d4a017">DIRA PLANE</text>
+              <text x="399" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">Runtime behavioral auth</text>
+              <line x1="464" y1="32" x2="494" y2="32" stroke="#d4a017" stroke-width="1.2"/>
+              <rect x="496" y="10" width="100" height="44" rx="3" fill="#0e1e16" stroke="#3dba6f" stroke-width="1.2"/>
+              <text x="546" y="28" text-anchor="middle" font-family="'Courier New',monospace" font-size="8" fill="#3dba6f">ENFORCEMENT</text>
+              <text x="546" y="41" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#c9d3de">block / audit / alert</text>
+              <rect x="10" y="80" width="586" height="30" rx="3" fill="#111418" stroke="#252b33"/>
+              <text x="303" y="100" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#c9d3de">Full stack: identity, scope, behavioral auth, enforcement. Architecture 3 pattern.</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div class="aw-result" id="aw-result">
+          <div class="aw-result-badge" id="aw-result-badge">Pattern</div>
+          <div class="aw-result-title" id="aw-result-title"></div>
+          <p class="aw-result-desc" id="aw-result-desc"></p>
+          <div class="aw-controls-block">
+            <span class="aw-controls-label">Controls to Implement</span>
+            <ul class="aw-controls-list" id="aw-controls-list"></ul>
+          </div>
+          <div id="aw-diagram-output" style="margin-top:16px;"></div>
+          <div style="margin-top:16px;">
+            <button class="aw-btn aw-btn-back" id="aw-restart">Start Over</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NHI EXPOSURE SCORECARD -->
+  <section class="tool-section" id="nhi-scorecard-section">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Tool / NHI Scorecard</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2>NHI Exposure Scorecard</h2>
+      <p class="section-intro">
+        Six questions on your non-human identity posture. Get a risk score, a color-coded risk level, and prioritized remediation recommendations mapped to OWASP NHI Top 10.
+      </p>
+
+      <div id="nhi-scorecard">
+        <div class="sc-header">
+          <div class="sc-title">NHI Risk Assessment</div>
+          <div class="sc-subtitle">Answer all six to get your score</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-questions">
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">How many non-human identities does your org have?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="0" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Dozens</span></label>
+                <label class="sc-option" data-q="0" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Hundreds</span></label>
+                <label class="sc-option" data-q="0" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">Thousands</span></label>
+                <label class="sc-option" data-q="0" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">Unknown</span></label>
+              </div>
+            </div>
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">Do you have a complete NHI inventory?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="1" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Yes, complete</span></label>
+                <label class="sc-option" data-q="1" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Partial</span></label>
+                <label class="sc-option" data-q="1" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">No</span></label>
+              </div>
+            </div>
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">Do NHI credentials get rotated regularly?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="2" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Yes, automated</span></label>
+                <label class="sc-option" data-q="2" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Yes, manual</span></label>
+                <label class="sc-option" data-q="2" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">Rarely</span></label>
+                <label class="sc-option" data-q="2" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">No</span></label>
+              </div>
+            </div>
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">Do NHIs have least-privilege scopes?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="3" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Yes, all NHIs</span></label>
+                <label class="sc-option" data-q="3" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Some do</span></label>
+                <label class="sc-option" data-q="3" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">No</span></label>
+                <label class="sc-option" data-q="3" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">Don't know</span></label>
+              </div>
+            </div>
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">Do you have offboarding controls for NHIs?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="4" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Yes, formal process</span></label>
+                <label class="sc-option" data-q="4" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Partial</span></label>
+                <label class="sc-option" data-q="4" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">No</span></label>
+              </div>
+            </div>
+
+            <div class="sc-q-block">
+              <div class="sc-q-text">Can you detect anomalous NHI behavior in real time?</div>
+              <div class="sc-options">
+                <label class="sc-option" data-q="5" data-score="0"><div class="sc-radio"></div><span class="sc-option-label">Yes, real-time detection</span></label>
+                <label class="sc-option" data-q="5" data-score="1"><div class="sc-radio"></div><span class="sc-option-label">Alerting only, no blocking</span></label>
+                <label class="sc-option" data-q="5" data-score="2"><div class="sc-radio"></div><span class="sc-option-label">No</span></label>
+              </div>
+            </div>
+
+          </div>
+          <div class="sc-result">
+            <span class="sc-result-label">Risk Assessment</span>
+            <div id="sc-output">
+              <p class="sc-placeholder">Answer the questions on the left to see your risk score.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-text">
+          cyberdaemon.ai. Views expressed here are the author's own and do not represent any employer.<br>
+          Independent educational resource on AI security architecture.
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+          <a href="https://cyberdaemon.ai" class="footer-back">cyberdaemon.ai &rarr;</a>
+          <a href="https://harnesses.cyberdaemon.ai" class="footer-back" style="color:var(--text-dim);font-size:10px;">harnesses.cyberdaemon.ai</a>
+          <a href="https://cyberdaemon.ai/dira" class="footer-back" style="color:var(--text-dim);font-size:10px;">DIRA</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---- ARCHITECTURE WIZARD ----
+  var awAnswers = {};
+  var awCurrent = 1;
+  var awTotal = 5;
+
+  function awUpdateDots() {
+    for (var i = 1; i <= awTotal; i++) {
+      var d = document.getElementById('awd' + i);
+      if (!d) continue;
+      d.classList.remove('active','done');
+      if (i < awCurrent) d.classList.add('done');
+      else if (i === awCurrent) d.classList.add('active');
+    }
+  }
+
+  function awShowQ(n) {
+    for (var i = 1; i <= awTotal; i++) {
+      var q = document.getElementById('awq' + i);
+      if (q) q.classList.remove('active');
+    }
+    document.getElementById('aw-result').classList.remove('active');
+    var target = document.getElementById('awq' + n);
+    if (target) target.classList.add('active');
+    awCurrent = n;
+    awUpdateDots();
+  }
+
+  document.querySelectorAll('.aw-option').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var q = this.getAttribute('data-q');
+      var v = this.getAttribute('data-v');
+      this.closest('.aw-options').querySelectorAll('.aw-option').forEach(function(b) {
+        b.classList.remove('selected');
+      });
+      this.classList.add('selected');
+      awAnswers['q' + q] = v;
+      var nb = document.getElementById('awq' + q + '-next') || document.getElementById('awq' + q + '-submit');
+      if (nb) nb.disabled = false;
+    });
+  });
+
+  for (var i = 1; i <= awTotal; i++) {
+    (function(n) {
+      var nb = document.getElementById('awq' + n + '-next');
+      if (nb) nb.addEventListener('click', function() { awShowQ(n + 1); });
+      var bb = document.getElementById('awq' + n + '-back');
+      if (bb) bb.addEventListener('click', function() { awShowQ(n - 1); });
+    })(i);
+  }
+
+  document.getElementById('awq5-submit').addEventListener('click', awShowResult);
+  document.getElementById('aw-restart').addEventListener('click', function() {
+    awAnswers = {};
+    document.querySelectorAll('.aw-option').forEach(function(b) { b.classList.remove('selected'); });
+    document.querySelectorAll('#arch-wizard .aw-btn').forEach(function(b) {
+      if (b.id && (b.id.indexOf('next') > -1 || b.id.indexOf('submit') > -1)) b.disabled = true;
+    });
+    document.getElementById('aw-result').classList.remove('active');
+    awShowQ(1);
+  });
+
+  var awPatterns = {
+    platform: {
+      badge: 'Pattern A: Platform-Native',
+      title: 'Platform-managed identity with IAM scope controls',
+      desc: 'Your deployment on a major cloud platform with commercial agents gives you managed identity, short-lived credentials, and native audit logging. The primary gaps are session-level scope binding and behavioral authorization, which you can address incrementally.',
+      controls: [
+        'Configure least-privilege IAM roles per agent, not per service',
+        'Enable cloud-native audit logging (CloudTrail, Sentinel, Cloud Audit Logs)',
+        'Implement NHI inventory process using platform-native tools',
+        'Review OWASP NHI Top 10 gaps against current configuration',
+        'No SPIFFE/SPIRE required at this tier'
+      ],
+      svg: 'arch-svg-simple'
+    },
+    spiffe: {
+      badge: 'Pattern B: SPIFFE + Session Scope',
+      title: 'Cryptographic workload identity with session-scoped tokens',
+      desc: 'Your requirements call for workload attestation beyond what platform-managed credentials provide. SPIFFE/SPIRE gives you short-lived, automatically rotated SVIDs tied to workload identity. Pair with session scope tokens for least-privilege enforcement per session.',
+      controls: [
+        'Deploy SPIRE server with node and workload attestation configured',
+        'Issue SVIDs per agent workload at startup, auto-rotate (1hr default)',
+        'Implement session scope tokens bound to user intent at session creation',
+        'Configure resource servers to validate both SVID and scope token',
+        'See Architecture 1 in Section 05 for the full implementation pattern'
+      ],
+      svg: 'arch-svg-spiffe'
+    },
+    multiagent: {
+      badge: 'Pattern C: Multi-Agent Delegation',
+      title: 'Scoped delegation chain with per-hop audit',
+      desc: 'Multi-agent orchestration creates a delegation chain where each hop needs independent identity and scope validation. Use Architecture 2: each sub-agent gets a scoped sub-token that is a strict subset of the delegating agent scope. The resource server validates both SVID and delegation token.',
+      controls: [
+        'Assign unique SVIDs per agent workload in the chain',
+        'Implement scoped sub-tokens: sub-agent scope cannot exceed parent scope',
+        'Configure resource servers to validate full delegation chain, not just leaf credentials',
+        'Capture per-hop audit records: orchestrator, sub-agent, resource, scope, outcome, timestamp',
+        'Consider DIRA gate at each delegation hop for high-impact actions'
+      ],
+      svg: 'arch-svg-multiagent'
+    },
+    dira: {
+      badge: 'Pattern D: Full Stack with DIRA',
+      title: 'Identity, scope, and behavioral authorization',
+      desc: 'Your security model requires enforcement that goes beyond static credentials. DIRA adds a runtime behavioral authorization layer: agents declare intent at session start, and actual tool calls are validated against that declaration before execution. This is the only pattern that addresses the behavioral gap that all commercial platforms leave open.',
+      controls: [
+        'SPIFFE/SPIRE for cryptographic workload identity (foundation layer)',
+        'Session scope tokens for per-session least-privilege enforcement',
+        'DIRA intent registration at session start, bound cryptographically',
+        'Per-action behavioral check: declared intent vs. actual tool call',
+        'Human approval gate for irreversible or high-impact actions (Architecture 3)',
+        'Full audit chain: identity, scope, behavioral decision, outcome'
+      ],
+      svg: 'arch-svg-dira'
+    }
+  };
+
+  function awCalcPattern() {
+    var needsDira = awAnswers.q5 === 'yes';
+    var needsSpiffe = awAnswers.q4 === 'yes' || awAnswers.q4 === 'maybe';
+    var isMultiAgent = awAnswers.q3 === 'multiagent' || awAnswers.q3 === 'all';
+
+    if (needsDira) return 'dira';
+    if (isMultiAgent) return 'multiagent';
+    if (needsSpiffe) return 'spiffe';
+    return 'platform';
+  }
+
+  function awShowResult() {
+    var patternKey = awCalcPattern();
+    var p = awPatterns[patternKey];
+
+    document.getElementById('aw-result-badge').textContent = p.badge;
+    document.getElementById('aw-result-title').textContent = p.title;
+    document.getElementById('aw-result-desc').textContent = p.desc;
+
+    var ul = document.getElementById('aw-controls-list');
+    ul.innerHTML = '';
+    p.controls.forEach(function(c) {
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="aw-ctrl-dot"></span>' + c;
+      ul.appendChild(li);
+    });
+
+    // Show the right pre-built SVG
+    var diagOut = document.getElementById('aw-diagram-output');
+    var svgSrc = document.getElementById(p.svg);
+    if (svgSrc) {
+      diagOut.innerHTML = '<div style="background:var(--bg-1);border:1px solid var(--border);border-radius:3px;padding:16px;overflow-x:auto;">' + svgSrc.innerHTML + '</div>';
+    }
+
+    // Hide questions, show result
+    for (var i = 1; i <= awTotal; i++) {
+      var q = document.getElementById('awq' + i);
+      if (q) q.classList.remove('active');
+    }
+    document.getElementById('aw-result').classList.add('active');
+    for (var j = 1; j <= awTotal; j++) {
+      var d = document.getElementById('awd' + j);
+      if (d) { d.classList.remove('active'); d.classList.add('done'); }
+    }
+  }
+
+  awShowQ(1);
+
+  // ---- NHI SCORECARD ----
+  var scScores = {};
+  var scTotal = 6;
+
+  var scRecs = [
+    { owasp: 'NHI1 — Improper Offboarding', text: 'Build a formal NHI offboarding workflow. Every decommissioned agent must have credentials revoked within one business day. Automate where possible.' },
+    { owasp: 'NHI2 — Secret Sprawl', text: 'Audit all NHI credentials across services, vaults, and config stores. Consolidate into a secrets manager. No credentials in code, config files, or environment variables without rotation.' },
+    { owasp: 'NHI3 — Overprivileged NHI', text: 'Scope every NHI credential to the minimum required permissions. Audit current scopes. Any NHI with broad permissions (write access across resources) is a breach blast radius risk.' },
+    { owasp: 'NHI7 — Long-Lived Secrets', text: 'Rotate NHI credentials automatically. Target 1-hour lifetimes for agent credentials (SPIFFE SVID default). Any credential older than 30 days without automatic rotation is a liability.' },
+    { owasp: 'NHI9 — NHI Reuse', text: 'Each agent, each service connection, and each pipeline component should have its own identity. Shared credentials create blast radius and obscure audit trails.' },
+    { owasp: 'NHI10 — Human Use of NHI', text: 'Audit whether human operators are using NHI credentials for direct access. This bypasses human-identity controls and creates untracked access paths. Separate human and machine credentials completely.' }
+  ];
+
+  var scRiskLevels = [
+    { max: 2, label: 'Low', cls: 'low', color: '#3dba6f', barColor: '#3dba6f', pct: 20 },
+    { max: 4, label: 'Medium', cls: 'medium', color: '#d4a017', barColor: '#d4a017', pct: 50 },
+    { max: 8, label: 'High', cls: 'high', color: '#e8803b', barColor: '#e8803b', pct: 75 },
+    { max: 12, label: 'Critical', cls: 'critical', color: '#e85555', barColor: '#e85555', pct: 100 }
+  ];
+
+  document.querySelectorAll('.sc-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      var q = parseInt(this.getAttribute('data-q'));
+      var score = parseInt(this.getAttribute('data-score'));
+      // deselect others in same question
+      this.closest('.sc-options').querySelectorAll('.sc-option').forEach(function(o) {
+        o.classList.remove('selected');
+      });
+      this.classList.add('selected');
+      scScores[q] = score;
+      scRender();
+    });
+  });
+
+  function scRender() {
+    var answered = Object.keys(scScores).length;
+    if (answered < scTotal) return;
+
+    var total = 0;
+    for (var k in scScores) { total += scScores[k]; }
+
+    var level = scRiskLevels[scRiskLevels.length - 1];
+    for (var i = 0; i < scRiskLevels.length; i++) {
+      if (total <= scRiskLevels[i].max) { level = scRiskLevels[i]; break; }
+    }
+
+    var html = '<div class="sc-score-display">' +
+      '<div class="sc-score-number ' + level.cls + '">' + total + '</div>' +
+      '<div>' +
+        '<div class="sc-score-label ' + level.cls + '">' + level.label + ' Risk</div>' +
+        '<div style="font-size:0.8rem;color:var(--text-dim);margin-top:2px;">Score ' + total + ' of 12</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="sc-bar-track"><div class="sc-bar-fill" style="width:' + ((total/12)*100) + '%;background:' + level.barColor + ';"></div></div>';
+
+    // Show recommendations based on score answers
+    var recs = [];
+    if (scScores[1] >= 1) recs.push(scRecs[0]); // no full inventory -> NHI1 offboarding
+    if (scScores[0] >= 1) recs.push(scRecs[1]); // hundreds+ -> secret sprawl
+    if (scScores[3] >= 1) recs.push(scRecs[2]); // not all least-priv -> NHI3
+    if (scScores[2] >= 1) recs.push(scRecs[3]); // not automated rotation -> NHI7
+    if (scScores[0] >= 2) recs.push(scRecs[4]); // thousands -> NHI reuse check
+    if (scScores[5] >= 1) recs.push(scRecs[5]); // no real-time detection -> NHI10
+
+    if (recs.length === 0) {
+      html += '<p style="font-size:0.875rem;color:var(--green);margin-top:12px;">Strong NHI posture. Continue automated rotation and inventory audits on a regular cadence.</p>';
+    } else {
+      html += '<div style="margin-top:12px;">';
+      recs.forEach(function(r) {
+        html += '<div class="sc-rec-item"><span class="sc-rec-owasp">' + r.owasp + '</span><span class="sc-rec-text">' + r.text + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    document.getElementById('sc-output').innerHTML = html;
+  }
+
+  awShowQ(1);
+})();
+</script>
+
+</body>
+</html>
