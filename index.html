@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,26 +9,68 @@
   <meta property="og:type" content="article">
   <title>The Identity Gap in Agentic AI · cyberdaemon.ai</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,700;1,700&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:       #0b0d11;
-      --surface:  #111520;
-      --border:   #1e2230;
-      --border2:  #282d40;
-      --text:     #e0ddef;
-      --text2:    #8a8aaa;
-      --text3:    #54546e;
-      --gold:     #c9a84c;
-      --gold-dim: rgba(201,168,76,0.1);
-      --teal:     #00c8a0;
-      --teal-dim: rgba(0,200,160,0.1);
-      --red:      #f85149;
-      --nav-bg:   rgba(11,13,17,0.92);
-      --grid:     rgba(0,200,160,0.025);
+    /* ── D3 LIGHT (default) ── */
+    :root,
+    [data-theme="light"] {
+      --bg:        #f9f9fc;
+      --surface:   #f0f0f8;
+      --surface2:  #e4e4f0;
+      --border:    #cccce0;
+      --border2:   #b8b8d0;
+      --text:      #0e0e1a;
+      --text2:     #4a4a6a;
+      --text3:     #8888a8;
+      --gold:      #8a6400;
+      --gold-dim:  #fff8e0;
+      --teal:      #007a60;
+      --teal-dim:  #e0f5f0;
+      --code-bg:   #f0f0f8;
+      --callout:   #fff8e8;
+      --nav-bg:    rgba(249,249,252,0.92);
+      --grid:      rgba(0,122,96,0.04);
+      --red:       #c0392b;
     }
+
+    /* ── D3 DARK ── */
+    [data-theme="dark"] {
+      --bg:        #0b0d11;
+      --surface:   #111520;
+      --surface2:  #171b28;
+      --border:    #1e2230;
+      --border2:   #282d40;
+      --text:      #e0ddef;
+      --text2:     #8a8aaa;
+      --text3:     #54546e;
+      --gold:      #c9a84c;
+      --gold-dim:  #1e1400;
+      --teal:      #00c8a0;
+      --teal-dim:  #041e18;
+      --code-bg:   #080a10;
+      --callout:   #14100a;
+      --nav-bg:    rgba(11,13,17,0.92);
+      --grid:      rgba(0,200,160,0.025);
+      --red:       #f85149;
+    }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text3);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: var(--teal); color: var(--teal); }
 
     html { scroll-behavior: smooth; }
 
@@ -43,6 +85,7 @@
       font-size: 16px;
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
+      transition: background 0.2s, color 0.2s;
     }
 
     a {
@@ -466,6 +509,7 @@
     <li><a href="https://cyberdaemon.ai">Home</a></li>
     <li><a href="https://dira.cyberdaemon.ai">DIRA</a></li>
   </ul>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">Light</button>
 </nav>
 
 <header class="hero">
@@ -892,6 +936,24 @@
       resultList.appendChild(li);
     });
   }
+</script>
+
+<script>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    var html = document.documentElement;
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      btn.textContent = t === 'light' ? 'Light' : 'Dark';
+    }
+    var saved = localStorage.getItem('cd-theme') || 'light';
+    applyTheme(saved);
+    btn.addEventListener('click', function () {
+      var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      localStorage.setItem('cd-theme', next);
+    });
+  }());
 </script>
 
 </body>
