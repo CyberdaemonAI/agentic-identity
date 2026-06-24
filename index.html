@@ -3,76 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Non-human identity (NHI) in agentic systems — workload identity standards, the behavioral authorization gap, and the DIRA framework.">
-  <meta property="og:title" content="The Identity Gap in Agentic AI">
-  <meta property="og:description" content="Non-human identity (NHI) in agentic systems — workload identity standards, the behavioral authorization gap, and the DIRA framework.">
+  <meta name="description" content="Non-human identity in agentic AI systems — a 100 to 400-level reference covering workload identity standards, the delegation problem, and the runtime authorization gap.">
+  <meta property="og:title" content="Non-Human Identity in Agentic AI · cyberdaemon.ai">
+  <meta property="og:description" content="A structured reference on NHI: from service accounts to SPIFFE to the behavioral authorization gap that current standards do not address.">
   <meta property="og:type" content="article">
-  <title>The Identity Gap in Agentic AI · cyberdaemon.ai</title>
+  <title>Non-Human Identity in Agentic AI · cyberdaemon.ai</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── D3 LIGHT (default) ── */
+    /* ── LIGHT THEME ── */
     :root,
     [data-theme="light"] {
-      --bg:        #f9f9fc;
-      --surface:   #f0f0f8;
-      --surface2:  #e4e4f0;
-      --border:    #cccce0;
-      --border2:   #b8b8d0;
-      --text:      #0e0e1a;
-      --text2:     #4a4a6a;
-      --text3:     #8888a8;
-      --gold:      #8a6400;
-      --gold-dim:  #fff8e0;
-      --teal:      #007a60;
-      --teal-dim:  #e0f5f0;
-      --code-bg:   #f0f0f8;
-      --callout:   #fff8e8;
-      --nav-bg:    rgba(249,249,252,0.92);
-      --grid:      rgba(0,122,96,0.04);
-      --red:       #c0392b;
+      --bg:          #f9f9fc;
+      --surface:     #f0f0f8;
+      --surface2:    #e4e4f0;
+      --border:      #cccce0;
+      --border2:     #b8b8d0;
+      --text:        #0e0e1a;
+      --text2:       #4a4a6a;
+      --text3:       #8888a8;
+      --teal:        #007a60;
+      --teal-light:  #00a37f;
+      --teal-dim:    #e0f5f0;
+      --gold:        #8a6400;
+      --gold-light:  #b08000;
+      --gold-dim:    #fff8e0;
+      --code-bg:     #eeeef8;
+      --nav-bg:      rgba(249,249,252,0.94);
+      --sidebar-bg:  rgba(249,249,252,0.98);
+      --grid:        rgba(0,122,96,0.04);
     }
 
-    /* ── D3 DARK ── */
+    /* ── DARK THEME ── */
     [data-theme="dark"] {
-      --bg:        #0b0d11;
-      --surface:   #111520;
-      --surface2:  #171b28;
-      --border:    #1e2230;
-      --border2:   #282d40;
-      --text:      #e0ddef;
-      --text2:     #8a8aaa;
-      --text3:     #54546e;
-      --gold:      #c9a84c;
-      --gold-dim:  #1e1400;
-      --teal:      #00c8a0;
-      --teal-dim:  #041e18;
-      --code-bg:   #080a10;
-      --callout:   #14100a;
-      --nav-bg:    rgba(11,13,17,0.92);
-      --grid:      rgba(0,200,160,0.025);
-      --red:       #f85149;
+      --bg:          #0b0d11;
+      --surface:     #111520;
+      --surface2:    #171b28;
+      --border:      #1e2230;
+      --border2:     #282d40;
+      --text:        #e0ddef;
+      --text2:       #8a8aaa;
+      --text3:       #54546e;
+      --teal:        #00c8a0;
+      --teal-light:  #00e0b0;
+      --teal-dim:    #041e18;
+      --gold:        #c9a84c;
+      --gold-light:  #e0c060;
+      --gold-dim:    #1e1400;
+      --code-bg:     #080a10;
+      --nav-bg:      rgba(11,13,17,0.94);
+      --sidebar-bg:  rgba(11,13,17,0.98);
+      --grid:        rgba(0,200,160,0.025);
     }
 
-    /* ── THEME TOGGLE ── */
-    .theme-toggle {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      color: var(--text3);
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+    /* ── BASE ── */
+    html {
+      scroll-behavior: smooth;
+      font-size: 17px;
     }
-    .theme-toggle:hover { border-color: var(--teal); color: var(--teal); }
-
-    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
@@ -81,9 +73,8 @@
         linear-gradient(90deg, var(--grid) 1px, transparent 1px);
       background-size: 40px 40px;
       color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.7;
+      font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      line-height: 1.75;
       -webkit-font-smoothing: antialiased;
       transition: background 0.2s, color 0.2s;
     }
@@ -94,722 +85,1114 @@
     }
     a:hover { text-decoration: underline; }
 
-    /* NAV */
-    nav {
+    /* ── TOP NAV ── */
+    nav.topnav {
       background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       padding: 0 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 56px;
+      height: 54px;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
     }
-    .nav-brand {
+
+    .nav-back {
       font-family: 'IBM Plex Mono', monospace;
-      font-weight: 600;
-      font-size: 13px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text3);
       letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.15s;
+      text-decoration: none;
     }
-    .brand-cyber  { color: var(--teal); }
-    .brand-daemon { color: var(--gold); }
-    .nav-links {
+    .nav-back:hover { color: var(--teal); text-decoration: none; }
+    .nav-back-arrow { font-size: 0.85rem; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .nav-links-top {
       display: flex;
       gap: 1.5rem;
       list-style: none;
     }
-    .nav-links a {
-      font-family: 'IBM Plex Mono', monospace;
+    .nav-links-top a {
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
+      font-weight: 500;
       color: var(--text3);
+      letter-spacing: 0.02em;
       transition: color 0.15s;
     }
-    .nav-links a:hover {
-      color: var(--teal);
-      text-decoration: none;
+    .nav-links-top a:hover { color: var(--teal); text-decoration: none; }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text3);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ── LAYOUT SHELL ── */
+    .layout {
+      display: flex;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
     }
 
-    /* HERO */
-    .hero {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 5rem 2rem 3rem;
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 54px;
+      height: calc(100vh - 54px);
+      overflow-y: auto;
+      padding: 2.5rem 1.5rem 2rem 0;
+      border-right: 1px solid var(--border);
     }
-    .hero-eyebrow {
+
+    .sidebar-label {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text3);
+      margin-bottom: 0.75rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0.1rem;
+    }
+
+    .sidebar-nav a {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text3);
+      line-height: 1.5;
+      display: block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .sidebar-nav a:hover {
+      color: var(--teal);
+      background: var(--teal-dim);
+    }
+    .sidebar-nav a.active {
+      color: var(--teal);
+      font-weight: 500;
+    }
+
+    .sidebar-nav .nav-level {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+      padding: 0.5rem 0.5rem 0.2rem;
+      display: block;
+    }
+
+    .sidebar-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.75rem 0;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .content {
+      flex: 1;
+      min-width: 0;
+      max-width: 740px;
+      padding: 3.5rem 0 6rem 3rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--teal);
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
-    .hero h1 {
+
+    .page-header h1 {
       font-family: 'Source Serif 4', Georgia, serif;
-      font-size: clamp(1.75rem, 4vw, 2.6rem);
+      font-size: clamp(1.6rem, 3.5vw, 2.25rem);
       font-weight: 700;
       line-height: 1.2;
       color: var(--gold);
-      margin-bottom: 1.25rem;
       letter-spacing: -0.02em;
+      margin-bottom: 1rem;
     }
-    .hero-sub {
-      font-size: 1.1rem;
+
+    .page-intro {
+      font-size: 1rem;
       color: var(--text2);
-      max-width: 620px;
-      line-height: 1.65;
+      line-height: 1.7;
+      max-width: 640px;
     }
 
-    /* MAIN */
-    main {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 2rem 5rem;
+    .level-index {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
     }
 
-    /* SECTION */
+    .level-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      color: var(--text3);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .level-pill:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+
+    /* ── SECTIONS ── */
     section {
       margin-bottom: 4rem;
+      scroll-margin-top: 72px;
     }
+
     h2 {
       font-family: 'Source Serif 4', Georgia, serif;
       font-size: 1.45rem;
       font-weight: 700;
       color: var(--gold);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+
+    .section-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
       margin-bottom: 1.25rem;
+    }
+
+    h3 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 2rem 0 0.75rem;
       letter-spacing: -0.01em;
     }
+
     p {
       color: var(--text);
       margin-bottom: 1rem;
     }
-    p + p { margin-top: 0.5rem; }
 
-    /* DIVIDER */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 3rem 0;
+    p + p { margin-top: 0; }
+
+    strong { color: var(--text); }
+    em { font-style: italic; }
+
+    /* ── INLINE CODE ── */
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82em;
+      background: var(--code-bg);
+      color: var(--teal);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
     }
 
-    /* COVERAGE SUMMARY */
-    .coverage-box {
+    /* ── CODE BLOCK ── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.82rem;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .code-comment { color: var(--text3); }
+    .code-key { color: var(--teal); }
+    .code-val { color: var(--gold); }
+
+    /* ── DIVIDER ── */
+    hr.section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3.5rem 0;
+    }
+
+    /* ── CALLOUT BOX ── */
+    .callout {
       background: var(--surface);
       border: 1px solid var(--border);
       border-left: 3px solid var(--teal);
       border-radius: 6px;
-      padding: 1.1rem 1.25rem;
-      margin: 1.5rem 0;
-    }
-    .coverage-box p {
-      font-size: 0.9rem;
-      color: var(--text2);
-      margin: 0;
-    }
-    .coverage-box strong { color: var(--text); }
-
-    /* SVG DIAGRAM */
-    .diagram-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 2rem 1.5rem;
-      margin: 2rem 0;
-      overflow-x: auto;
-    }
-    .diagram-wrap svg {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-    }
-
-    /* GAP SECTION */
-    .gap-callout {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--gold);
-      border-radius: 6px;
-      padding: 1.25rem 1.4rem;
+      padding: 1.1rem 1.4rem;
       margin: 1.75rem 0;
     }
-    .gap-callout p {
-      font-size: 0.9rem;
+
+    .callout.gold {
+      border-left-color: var(--gold);
+    }
+
+    .callout p {
+      font-size: 0.92rem;
       color: var(--text2);
-      margin: 0 0 0.4rem;
+      margin-bottom: 0.5rem;
     }
-    .gap-callout p:last-child { margin-bottom: 0; }
-    .gap-callout strong { color: var(--text); }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout strong { color: var(--text); }
 
-    .gap-questions {
-      list-style: none;
-      margin: 1.5rem 0;
-      padding: 0;
-    }
-    .gap-questions li {
-      position: relative;
-      padding-left: 1.5rem;
-      margin-bottom: 0.65rem;
-      color: var(--text);
-      font-size: 0.95rem;
-    }
-    .gap-questions li::before {
-      content: "·";
-      position: absolute;
-      left: 0.5rem;
-      color: var(--gold);
-      font-weight: 700;
-    }
-
-    /* DIRA SECTION */
-    .dira-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--gold);
-      border-radius: 8px;
-      padding: 1.75rem;
-      margin: 1.75rem 0;
-    }
-    .dira-label {
+    .callout-label {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.65rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--teal);
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
-    .dira-signals {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1.25rem 0;
-    }
-    @media (max-width: 540px) {
-      .dira-signals { grid-template-columns: 1fr; }
-    }
-    .dira-signal {
-      background: var(--bg);
+    .callout.gold .callout-label { color: var(--gold); }
+
+    /* ── TERM LIST ── */
+    .term-list {
+      list-style: none;
+      margin: 1.5rem 0;
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 1rem;
+      overflow: hidden;
     }
-    .dira-signal-label {
+
+    .term-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .term-list li:last-child { border-bottom: none; }
+
+    .term-list li:nth-child(even) {
+      background: var(--surface);
+    }
+
+    .term-code {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.78rem;
+      color: var(--teal);
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 160px;
+    }
+
+    .term-def {
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    /* ── BULLET LIST ── */
+    ul.prose-list {
+      list-style: none;
+      margin: 1.25rem 0;
+      padding: 0;
+    }
+
+    ul.prose-list li {
+      position: relative;
+      padding-left: 1.4rem;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    ul.prose-list li::before {
+      content: "·";
+      position: absolute;
+      left: 0.5rem;
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* ── SPIFFE EXAMPLE BLOCK ── */
+    .spiffe-examples {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .spiffe-examples p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text2);
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
+    .spiffe-examples p:last-child { margin-bottom: 0; }
+
+    .spiffe-examples .sp-comment {
+      color: var(--text3);
+      font-style: normal;
+    }
+
+    .spiffe-examples .sp-scheme { color: var(--teal); }
+    .spiffe-examples .sp-domain { color: var(--gold); }
+    .spiffe-examples .sp-path { color: var(--text); }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+
+    .compare-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text3);
-      margin-bottom: 0.4rem;
-    }
-    .dira-signal-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-    .dira-signal-desc {
-      font-size: 0.82rem;
-      color: var(--text2);
-      line-height: 1.5;
-    }
-    .dira-link {
-      display: inline-block;
-      margin-top: 1.25rem;
-      padding: 0.55rem 1.1rem;
-      background: transparent;
-      border: 1px solid var(--teal);
-      border-radius: 6px;
-      color: var(--teal);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: background 0.15s;
-    }
-    .dira-link:hover {
-      background: var(--teal-dim);
-      text-decoration: none;
+      padding: 0.6rem 0.9rem;
+      border-bottom: 2px solid var(--border);
+      text-align: left;
     }
 
-    /* GAP ANALYZER */
-    .analyzer-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.75rem;
-      margin: 2.5rem 0;
-    }
-    .analyzer-title {
-      font-family: 'Source Serif 4', Georgia, serif;
-      font-size: 1rem;
-      font-weight: 700;
+    .compare-table td {
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
       color: var(--text);
-      margin-bottom: 0.4rem;
+      line-height: 1.5;
+      vertical-align: top;
     }
-    .analyzer-sub {
+
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .compare-table tr:nth-child(even) td { background: var(--surface); }
+
+    .tag-yes {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--text3);
-      margin-bottom: 1.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--teal);
+      background: var(--teal-dim);
+      padding: 2px 7px;
+      border-radius: 3px;
     }
-    .analyzer-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+
+    .tag-no {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gold);
+      background: var(--gold-dim);
+      padding: 2px 7px;
+      border-radius: 3px;
     }
-    @media (max-width: 520px) {
-      .analyzer-controls { grid-template-columns: 1fr; }
+
+    /* ── OPEN PROBLEMS LIST ── */
+    ol.open-problems {
+      list-style: none;
+      counter-reset: problem-counter;
+      margin: 1.25rem 0;
+      padding: 0;
     }
-    .analyzer-check {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-      cursor: pointer;
-      padding: 0.75rem 0.9rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      transition: border-color 0.15s;
-      user-select: none;
-    }
-    .analyzer-check:hover { border-color: var(--teal); }
-    .analyzer-check input[type="checkbox"] {
-      margin-top: 2px;
-      flex-shrink: 0;
-      accent-color: var(--teal);
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
-    }
-    .analyzer-check-label {
-      font-size: 0.85rem;
+
+    ol.open-problems li {
+      counter-increment: problem-counter;
+      position: relative;
+      padding: 0.75rem 0 0.75rem 3rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
       color: var(--text);
-      line-height: 1.4;
     }
-    .analyzer-check-label small {
-      display: block;
-      color: var(--text3);
-      font-size: 0.77rem;
-      margin-top: 0.15rem;
-    }
-    .analyzer-result {
-      border-top: 1px solid var(--border);
-      padding-top: 1.25rem;
-    }
-    .result-label {
+    ol.open-problems li:last-child { border-bottom: none; }
+
+    ol.open-problems li::before {
+      content: counter(problem-counter, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 0.75rem;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.72rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
       color: var(--text3);
-      margin-bottom: 0.75rem;
     }
-    .result-items {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .result-item {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.5rem 0;
-      font-size: 0.875rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .result-item:last-child { border-bottom: none; }
-    .result-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .result-icon.covered { background: rgba(0,200,160,0.2); color: var(--teal); }
-    .result-icon.gap     { background: rgba(248,81,73,0.15); color: var(--red); }
-    .result-icon.partial { background: rgba(201,168,76,0.2); color: var(--gold); }
-    .result-text { color: var(--text); line-height: 1.4; }
-    .result-text small { display: block; color: var(--text2); font-size: 0.78rem; }
 
-    /* FOOTER */
+    ol.open-problems li strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      color: var(--text);
+    }
+
+    ol.open-problems li span {
+      color: var(--text2);
+      font-size: 0.88rem;
+    }
+
+    /* ── FOOTER ── */
     footer {
       background: var(--surface);
       border-top: 1px solid var(--border);
       text-align: center;
       padding: 2rem;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text3);
+      letter-spacing: 0.03em;
     }
     footer a { color: var(--text3); }
     footer a:hover { color: var(--teal); }
 
-    /* RESPONSIVE */
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .sidebar { display: none; }
+      .content { padding: 2.5rem 0 4rem; }
+      .layout { padding: 0 1.25rem; }
+    }
+
     @media (max-width: 600px) {
-      .hero { padding: 3rem 1.25rem 2rem; }
-      main { padding: 0 1.25rem 3rem; }
-      nav { padding: 0 1.25rem; }
-      .nav-links { display: none; }
+      .nav-links-top { display: none; }
+      nav.topnav { padding: 0 1.25rem; }
+      html { font-size: 16px; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <span class="nav-brand"><span class="brand-cyber">cyber</span><span class="brand-daemon">daemon</span>.ai</span>
-  <ul class="nav-links">
-    <li><a href="https://cyberdaemon.ai">Home</a></li>
-    <li><a href="https://dira.cyberdaemon.ai">DIRA</a></li>
-  </ul>
-  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">Light</button>
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="nav-back" href="https://cyberdaemon.ai">
+    <span class="nav-back-arrow">&#8592;</span>
+    <span>cyberdaemon.ai</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links-top">
+      <li><a href="https://ai-governance.cyberdaemon.ai">Governance</a></li>
+      <li><a href="https://harnesses.cyberdaemon.ai">Harnesses</a></li>
+      <li><a href="https://dira.cyberdaemon.ai">DIRA</a></li>
+    </ul>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">Light</button>
+  </div>
 </nav>
 
-<header class="hero">
-  <p class="hero-eyebrow">IAM &amp; Agentic AI Security</p>
-  <h1>The Identity Gap in Agentic AI</h1>
-  <p class="hero-sub">
-    The commercial identity market has mature answers for credential lifecycle, access discovery, and entitlement governance.
-    It does not have an answer for runtime intent verification. That gap is getting wider as AI agents become autonomous actors.
-  </p>
-</header>
+<!-- LAYOUT -->
+<div class="layout">
 
-<main>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" aria-label="Page navigation">
+    <div class="sidebar-label">On this page</div>
+    <nav>
+      <ul class="sidebar-nav">
+        <li><span class="nav-level">100</span></li>
+        <li><a href="#nhi-defined">What is NHI?</a></li>
+        <li><a href="#nhi-history">History</a></li>
+        <li><a href="#nhi-harder">Why it's harder</a></li>
+        <li><a href="#nhi-scale">Scale</a></li>
+        <li><a href="#nhi-terms">Key terms</a></li>
 
-  <!-- SECTION 1 -->
-  <section id="problem">
-    <h2>The Identity Problem Has Changed</h2>
-    <p>
-      For two decades, the identity question was relatively stable: who is this person, are their credentials valid, and what are they allowed to access?
-      That question maps cleanly to authentication and authorization. SAML, OAuth2, OIDC, RBAC, ABAC. The industry built mature tooling around all of it.
-    </p>
-    <p>
-      AI agents break that model. An agent does not authenticate once and then sit idle. It authenticates, chains tools, calls external APIs, spawns sub-agents,
-      carries tokens across session boundaries, and makes decisions autonomously. The identity surface is not a single point; it is an extended runtime behavior.
-    </p>
-    <p>
-      Traditional IAM asks: <em>who are you?</em> That is a solved problem. The harder question agentic AI requires is: <em>what were you sent to do?</em>
-      That question does not have a commercial answer yet. Not in any shipping product. Not in any mature framework.
-      The gap between those two questions is where most of the real risk lives.
-    </p>
-  </section>
+        <hr class="sidebar-divider">
 
-  <hr class="divider">
+        <li><span class="nav-level">200</span></li>
+        <li><a href="#agentic-defined">What "agentic" means</a></li>
+        <li><a href="#agentic-shift">The fundamental shift</a></li>
+        <li><a href="#agentic-delegation">Delegation explosion</a></li>
+        <li><a href="#agentic-persistence">Token persistence</a></li>
+        <li><a href="#agentic-gaps">What IAM doesn't cover</a></li>
 
-  <!-- SECTION 2 -->
+        <hr class="sidebar-divider">
 
-  <hr class="divider">
+        <li><span class="nav-level">300</span></li>
+        <li><a href="#spiffe">SPIFFE</a></li>
+        <li><a href="#svids">SVIDs</a></li>
+        <li><a href="#spire">SPIRE</a></li>
+        <li><a href="#oauth-nhi">OAuth2 for NHI</a></li>
+        <li><a href="#mtls">mTLS</a></li>
+        <li><a href="#standards-gap">The standards gap</a></li>
 
-  <!-- SECTION 3 -->
-  <section id="gap">
-    <h2>The Gap</h2>
-    <p>
-      Identity and authorization together tell you who an agent is and what resources that identity is permitted to touch.
-      That is genuinely useful information. But it is not sufficient for agentic workloads, and the distinction matters.
-    </p>
-    <p>
-      Consider the actual questions that arise when an AI agent is operating autonomously inside an enterprise system.
-      None of the current vendor categories have systematic answers to them:
-    </p>
+        <hr class="sidebar-divider">
 
-    <ul class="gap-questions">
-      <li>Was this agent authorized to take <em>this specific action</em>, in <em>this session</em>, given what it was originally asked to do?</li>
-      <li>What was the declared intent at session start? Is the current action consistent with it?</li>
-      <li>Has the agent been redirected mid-task by a prompt injection or adversarial input it encountered in external content?</li>
-      <li>Is the agent exhibiting goal drift: still operating within its permission boundary, but pursuing something different from its original objective?</li>
-      <li>If a sub-agent was spawned, does it inherit the parent's intent scope, and who is accountable if it does not?</li>
-    </ul>
+        <li><span class="nav-level">400</span></li>
+        <li><a href="#runtime-problem">The problem defined</a></li>
+        <li><a href="#runtime-requirements">What it requires</a></li>
+        <li><a href="#runtime-hard">Why it's hard</a></li>
+        <li><a href="#runtime-delegation">Multi-agent trust</a></li>
+        <li><a href="#runtime-directions">Research directions</a></li>
+        <li><a href="#runtime-open">Open problems</a></li>
+      </ul>
+    </nav>
+  </aside>
 
-    <div class="gap-callout">
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+      <p class="page-eyebrow">Reference · Identity &amp; Agentic AI Security</p>
+      <h1>Non-Human Identity in Agentic AI</h1>
+      <p class="page-intro">
+        A structured reference on non-human identity (NHI): what it is, how it works today, what the current standards cover, and where they stop. Organized as a 100 to 400-level progression. Each section is self-contained.
+      </p>
+      <div class="level-index">
+        <a class="level-pill" href="#section-100">100 · What Is NHI?</a>
+        <a class="level-pill" href="#section-200">200 · Agentic AI Changes the Problem</a>
+        <a class="level-pill" href="#section-300">300 · Workload Identity Standards</a>
+        <a class="level-pill" href="#section-400">400 · The Runtime Authorization Problem</a>
+      </div>
+    </header>
+
+    <!-- ── 100 LEVEL ── -->
+    <section id="section-100" style="scroll-margin-top: 72px;">
+      <div class="section-meta">100 — Foundational</div>
+      <h2>What Is Non-Human Identity?</h2>
+    </section>
+
+    <section id="nhi-defined" style="scroll-margin-top: 72px;">
+      <h3>Starting point: machines need identities too</h3>
       <p>
-        <strong>The identity plane knows who.</strong> The authorization plane knows what resources the identity can touch.
-        Neither plane knows what the agent was asked to do, whether the current action reflects that ask,
-        or whether something intercepted and redirected the agent between those two points.
+        Identity, in security terms, is the answer to one question: who or what is making this request? For human users, the answer involves a username, a password, a second factor, and a session. For machines — services, workloads, containers, scripts, databases, and AI agents — the same question applies. A service calling an API needs to prove who it is. A container reading a secret needs to be recognized. A background job writing to a database needs to be authorized to do so.
       </p>
       <p>
-        This is the runtime authorization gap. It is not a credential problem. It is not a permissions problem.
-        It is a behavioral consistency problem, and it requires a different class of control.
+        Non-human identity (NHI) is the umbrella term for the identities assigned to these machine actors. The category includes service accounts in an operating system or cloud platform, API keys issued to applications, certificates bound to servers, OAuth2 clients registered to software systems, and workload identity documents issued by orchestration platforms. Anything that operates autonomously and needs to authenticate to another system has an NHI.
       </p>
-    </div>
+    </section>
 
-    <p>
-      The gap is not a product deficiency on the part of these vendors. Credential vaulting is not the right tool for behavioral verification.
-      Neither is an entitlement graph. The gap is structural: current IAM architecture was designed for synchronous, human-initiated authentication events.
-      Agentic AI introduces asynchronous, multi-step, multi-actor behavioral chains that existing IAM architecture was never designed to reason about.
-    </p>
-  </section>
+    <section id="nhi-history" style="scroll-margin-top: 72px;">
+      <h3>A brief history: service accounts to workload identity</h3>
+      <p>
+        The earliest machine identity pattern was the <code>service account</code> — a user-like account in Active Directory or UNIX with a password, created to run a scheduled task or background service. These worked, but passwords had to be managed manually and almost universally weren't rotated. Compromise of a service account password meant standing access to whatever that account was permitted to reach, often indefinitely.
+      </p>
+      <p>
+        <code>API key</code>s emerged as web services proliferated. A string of characters issued at registration, sent in a header on every request. Simple to issue, simple to verify, and extremely difficult to scope. An API key either works or it doesn't. There is no standard mechanism for binding it to a specific caller, a specific context, or an expiration time.
+      </p>
+      <p>
+        <code>mTLS</code> (mutual TLS) offered a better model: both the client and server present X.509 certificates during the handshake, cryptographically proving identity to each other. This moved machine identity from a shared secret (the password or key) to a cryptographic proof. The limitation was operational complexity: issuing, distributing, and rotating certificates at scale required a functioning PKI, which many organizations lacked.
+      </p>
+      <p>
+        <code>workload identity</code> is the current generation. Platforms like Kubernetes, AWS, GCP, and Azure issue short-lived, cryptographically verifiable identity tokens to workloads at runtime, tied to the execution environment rather than a static credential. SPIFFE (covered in section 300) is the open standard that defines how this should work across platforms.
+      </p>
+    </section>
 
-  <hr class="divider">
+    <section id="nhi-harder" style="scroll-margin-top: 72px;">
+      <h3>Why machine identity is harder than human identity</h3>
+      <p>
+        Human identity has a natural fallback that machine identity lacks: the person on the other end. If a user's session behaves unexpectedly, you can ask them. If a credential appears in two locations simultaneously, a human review catches it. Human identity also has strong ecosystem support: multi-factor authentication, behavioral biometrics, conditional access, anomaly scoring on login patterns. The cognitive awareness of the user is itself a control.
+      </p>
+      <p>
+        Machines have none of this. A compromised <code>API key</code> or <code>service account</code> credential makes requests that are indistinguishable from legitimate ones. There is no second factor available. There is no way to ask the workload whether it intended to make this call. Revocation requires knowing the credential is compromised in the first place.
+      </p>
+      <p>
+        Three structural problems make machine identity persistently harder. First, secrets tend to end up in configuration files, environment variables, and code repositories — they spread to wherever the service needs them, which is usually everywhere. Second, machine identities accumulate: they are created for a project or sprint and never decommissioned. Third, delegation chains are opaque: service A calls service B on behalf of user C, and the identity of the original requester is often lost by the third hop.
+      </p>
+    </section>
 
-  <!-- SECTION 4: DIRA -->
-  <section id="dira">
-    <h2>Dual-Intent Runtime Authorization</h2>
-    <p>
-      DIRA is a framework for closing the runtime authorization gap. It is not a product.
-      The research starts with a simple observation: every agent session begins with a declared intent, and produces a sequence of realized actions.
-      The security question is whether those two things remain consistent throughout the session.
-    </p>
-    <p>
-      DIRA captures two signals and compares them on every action the agent takes.
-    </p>
+    <section id="nhi-scale" style="scroll-margin-top: 72px;">
+      <h3>The scale problem</h3>
+      <p>
+        A mid-size enterprise in 2025 has somewhere between 10 and 50 human identities per machine identity in the traditional model. Modern cloud-native environments invert this ratio sharply. Containerized microservice deployments may run hundreds of service instances, each with its own identity. CI/CD pipelines create and destroy workloads continuously. SaaS integrations mean OAuth grants accumulate in every connected application. A medium enterprise today has more machine identities than human ones, often by an order of magnitude.
+      </p>
+      <p>
+        This scale changes the security calculus. Discovery — finding all the machine identities that exist — becomes a prerequisite for managing them. Rotation, which was straightforward for a small number of service account passwords, becomes an orchestration problem at scale. Decommissioning requires knowing which identities are still in use, which requires runtime telemetry that most organizations do not have.
+      </p>
+    </section>
 
-    <div class="dira-box">
-      <div class="dira-label">DIRA Framework</div>
+    <section id="nhi-terms" style="scroll-margin-top: 72px;">
+      <h3>Key terms</h3>
+      <ul class="term-list">
+        <li>
+          <span class="term-code">service account</span>
+          <span class="term-def">A user-like account in a directory service (Active Directory, LDAP, GCP, AWS IAM) created to represent a machine or application rather than a person.</span>
+        </li>
+        <li>
+          <span class="term-code">API key</span>
+          <span class="term-def">A static secret string issued by a service to authenticate a caller. No expiry by default, no scoping mechanism, no cryptographic binding to the caller.</span>
+        </li>
+        <li>
+          <span class="term-code">mTLS</span>
+          <span class="term-def">Mutual TLS: both client and server present X.509 certificates during the TLS handshake, providing cryptographic proof of identity on both sides.</span>
+        </li>
+        <li>
+          <span class="term-code">workload identity</span>
+          <span class="term-def">A short-lived, cryptographically verifiable identity document issued to a running workload by its execution platform. Replaces static credentials with runtime-issued proof.</span>
+        </li>
+        <li>
+          <span class="term-code">SVID</span>
+          <span class="term-def">SPIFFE Verifiable Identity Document. The identity artifact produced by the SPIFFE framework — either an X.509 certificate or a JWT, depending on the context. Defined in section 300.</span>
+        </li>
+        <li>
+          <span class="term-code">trust domain</span>
+          <span class="term-def">A namespace in SPIFFE that identifies a system boundary. Workload identities are scoped to a trust domain. Federation allows two trust domains to accept each other's SVIDs.</span>
+        </li>
+      </ul>
+    </section>
 
-      <div class="dira-signals">
-        <div class="dira-signal">
-          <div class="dira-signal-label">Signal 1</div>
-          <div class="dira-signal-name">Declared Intent</div>
-          <div class="dira-signal-desc">
-            What the agent was asked to do at session start. Captured at the authorization boundary before execution begins.
-            This is the reference signal. It does not change during the session.
-          </div>
-        </div>
-        <div class="dira-signal">
-          <div class="dira-signal-label">Signal 2</div>
-          <div class="dira-signal-name">Realized Intent</div>
-          <div class="dira-signal-desc">
-            What the agent is actually doing now. Inferred from the action sequence during execution.
-            This is the observed signal. It is evaluated against the reference on each action step.
-          </div>
-        </div>
+    <hr class="section-divider">
+
+    <!-- ── 200 LEVEL ── -->
+    <section id="section-200" style="scroll-margin-top: 72px;">
+      <div class="section-meta">200 — Intermediate</div>
+      <h2>How Agentic AI Changes the Problem</h2>
+    </section>
+
+    <section id="agentic-defined" style="scroll-margin-top: 72px;">
+      <h3>What "agentic" means in practice</h3>
+      <p>
+        An agentic AI system is one that takes multi-step actions autonomously to accomplish a goal, rather than producing a single output in response to a single input. The defining capability is tool use: an agent can call external APIs, read files, execute code, browse the web, send messages, or invoke other agents — and then use the results to determine its next action. This loop continues until the task is complete or the agent is halted.
+      </p>
+      <p>
+        In a concrete deployment, "agentic" might look like: a user asks an assistant to research a topic and produce a summary. The assistant breaks this into sub-tasks, queries multiple APIs, stores intermediate results, spawns a sub-agent to handle a specialized portion, synthesizes the outputs, and delivers a final response. The user sees one request and one response. In between, dozens of distinct operations occurred — each with its own authentication event, authorization decision, and data access.
+      </p>
+      <p>
+        Sub-agent spawning is increasingly common. An orchestrator agent delegates work to specialist agents: one that handles document retrieval, one that handles code execution, one that handles external communication. The orchestrator may pass credentials, context, or capability grants to the sub-agents it creates. What those sub-agents do with what they receive is the governance problem.
+      </p>
+    </section>
+
+    <section id="agentic-shift" style="scroll-margin-top: 72px;">
+      <h3>The fundamental shift</h3>
+      <p>
+        IAM was designed around a synchronous, human-initiated model. A person makes a request. The system authenticates them. An authorization policy evaluates the request against the identity's entitlements. Access is granted or denied. The session ends. The model is essentially stateless between authentication events: the identity is verified at the boundary, and the session proceeds within whatever permissions that identity holds.
+      </p>
+      <p>
+        Agentic AI breaks this model in several ways. The agent authenticates once but acts many times over an extended session. Each action is a distinct authorization event. The sequence of actions is not known at authentication time. The actions span multiple systems, each with its own policy engine. And the agent may take actions that alter the context for its subsequent actions — reading data from one system that influences what it sends to another.
+      </p>
+      <p>
+        This means the authorization question is not "can this identity access this resource?" — it is "can this identity, pursuing this task, take this specific action at this point in its execution, given everything it has already done?" That is a different and harder question. It requires state. Current IAM does not maintain it.
+      </p>
+    </section>
+
+    <section id="agentic-delegation" style="scroll-margin-top: 72px;">
+      <h3>The delegation explosion</h3>
+      <p>
+        Human delegation in IAM is well-understood: a user grants another user or a service access to act on their behalf. This is modeled in OAuth2, in Kerberos constrained delegation, in Azure managed identity federation. The patterns are mature. The scope is typically bounded: one principal delegates to one other principal for one defined purpose.
+      </p>
+      <p>
+        Agentic delegation is structurally different. An orchestrator agent receives a task from a user and spawns three sub-agents. Each sub-agent calls external APIs using a token that was issued to, or inherited from, the orchestrator. Sub-agent B spawns a nested sub-agent to handle a data fetch. That nested agent makes an API call that modifies data in a production system.
+      </p>
+      <p>
+        The accountability question: who is responsible for that production data modification? The user who initiated the top-level task. The orchestrator that delegated to sub-agent B. Sub-agent B that spawned the nested agent. The nested agent that executed the call. The answer is probably all of them, but the audit trail that would let you reconstruct that chain does not exist in most current deployments. Tokens do not carry delegation ancestry. Access logs record the immediate caller, not the chain.
+      </p>
+      <p>
+        The governance problem compounds as delegation depth increases. At depth two or three, the connection between the original human instruction and the eventual system action becomes extremely difficult to reconstruct. At depth five or ten — which is plausible in a complex autonomous system — it may be practically impossible.
+      </p>
+    </section>
+
+    <section id="agentic-persistence" style="scroll-margin-top: 72px;">
+      <h3>Token persistence across session boundaries</h3>
+      <p>
+        A less-discussed but significant problem: agents that carry credentials across context resets or session boundaries. In a multi-turn agent system, the agent may persist its authentication state between invocations. A token issued in turn one is still present in turn forty-seven. The original session context — what the user asked for, what the agent was authorized to do — may have been summarized, truncated, or lost. The credential remains.
+      </p>
+      <p>
+        This is analogous to the standing access problem in human IAM, but with a twist: the expiry model that makes short-lived workload identity tokens safe assumes that the session ends. If the session is perpetual, or if the agent has a mechanism to refresh its own tokens autonomously, short-lived tokens become effectively long-lived ones. The credential surface is larger than the credential lifetime implies.
+      </p>
+    </section>
+
+    <section id="agentic-gaps" style="scroll-margin-top: 72px;">
+      <h3>What current IAM covers — and what it does not</h3>
+      <p>
+        It is worth being precise here. The existing IAM category has real, mature coverage of several problems:
+      </p>
+      <ul class="prose-list">
+        <li><strong>Authentication:</strong> verifying that a machine identity is what it claims to be, via certificates, tokens, or cryptographic proofs.</li>
+        <li><strong>Credential lifecycle:</strong> issuing, rotating, vaulting, and revoking secrets and certificates.</li>
+        <li><strong>Entitlement governance:</strong> discovering what identities exist, what access they hold, and certifying that access periodically.</li>
+        <li><strong>Access policy enforcement:</strong> evaluating whether a given identity is permitted to access a given resource at request time.</li>
+      </ul>
+      <p>
+        These are solved problems, or close to it. What current IAM does not cover:
+      </p>
+      <ul class="prose-list">
+        <li><strong>Behavioral consistency:</strong> whether the sequence of actions an agent takes is consistent with what it was originally asked to do.</li>
+        <li><strong>Intent verification:</strong> whether the action being taken at this moment reflects the original task or a redirect introduced by external content.</li>
+        <li><strong>Mid-session drift detection:</strong> whether the agent's objective has shifted during execution, within its permission boundary.</li>
+        <li><strong>Delegation chain accountability:</strong> who bears responsibility for an action taken at depth N of a delegation chain.</li>
+      </ul>
+
+      <div class="callout gold">
+        <div class="callout-label">The distinction that matters</div>
+        <p>
+          Permission to access a resource is not the same as authorization to use that access for a particular purpose. A read-access identity can summarize a document or exfiltrate it. The access pattern is identical. The permission is identical. The distinction lives in intent — and intent is not a property that current IAM systems track.
+        </p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── 300 LEVEL ── -->
+    <section id="section-300" style="scroll-margin-top: 72px;">
+      <div class="section-meta">300 — Standards &amp; Implementation</div>
+      <h2>Workload Identity Standards</h2>
+    </section>
+
+    <section id="spiffe" style="scroll-margin-top: 72px;">
+      <h3>SPIFFE: the open workload identity standard</h3>
+      <p>
+        SPIFFE stands for Secure Production Identity Framework For Everyone. It is a CNCF (Cloud Native Computing Foundation) open standard, not a product. SPIFFE defines what a workload identity is, what format it takes, and how it is issued and verified — across platforms, clouds, and organizational boundaries. The goal is interoperability: a workload in one environment should be able to prove its identity to a service in a completely different environment without pre-shared secrets.
+      </p>
+      <p>
+        The core concept is the SPIFFE ID: a URI that uniquely identifies a workload within a trust domain. The format is:
+      </p>
+
+      <div class="spiffe-examples">
+        <p><span class="sp-comment"># Generic form</span></p>
+        <p><span class="sp-scheme">spiffe://</span><span class="sp-domain">trust-domain</span><span class="sp-path">/path/to/workload</span></p>
+        <p>&nbsp;</p>
+        <p><span class="sp-comment"># Production API service</span></p>
+        <p><span class="sp-scheme">spiffe://</span><span class="sp-domain">prod.example.com</span><span class="sp-path">/ns/payments/sa/api-service</span></p>
+        <p>&nbsp;</p>
+        <p><span class="sp-comment"># Data processing workload in a Kubernetes namespace</span></p>
+        <p><span class="sp-scheme">spiffe://</span><span class="sp-domain">k8s.internal</span><span class="sp-path">/namespace/data-pipeline/serviceaccount/processor</span></p>
+        <p>&nbsp;</p>
+        <p><span class="sp-comment"># AI agent identity</span></p>
+        <p><span class="sp-scheme">spiffe://</span><span class="sp-domain">agents.example.com</span><span class="sp-path">/agent/summarizer/instance/a7b3c9</span></p>
       </div>
 
-      <p style="font-size:0.92rem; color: var(--text2); margin-bottom: 0.6rem;">
-        <strong style="color: var(--text);">Enforcement model:</strong> on each action, compare realized intent against declared intent.
-        If the action is consistent with the declared scope, permit. If it diverges beyond a configurable threshold, flag or block.
-        The same mechanism surfaces prompt injection: an injected instruction changes what the agent is trying to do,
-        and that change is detectable as divergence from the declared intent.
+      <p>
+        The <code>trust-domain</code> is a namespace owned by an organization or team. The path identifies the specific workload within that domain. The format is deliberately flexible: the path structure is not mandated by the spec, so teams can encode whatever metadata is meaningful for their system.
       </p>
-      <p style="font-size:0.92rem; color: var(--text2); margin: 0;">
-        DIRA sits above the authorization plane in the stack. It does not replace credential vaulting, entitlement management, or scoped tokens.
-        It assumes those controls are in place and adds the behavioral consistency layer that currently does not exist.
+    </section>
+
+    <section id="svids" style="scroll-margin-top: 72px;">
+      <h3>SVIDs: the identity document</h3>
+      <p>
+        A SPIFFE Verifiable Identity Document (SVID) is the cryptographic artifact that carries the SPIFFE ID. The spec defines two SVID formats, used in different contexts:
+      </p>
+      <p>
+        <strong>X.509-SVIDs</strong> are X.509 certificates with the SPIFFE ID encoded in the Subject Alternative Name (SAN) field as a URI. They are used at the transport layer, typically via mTLS. Both communicating parties present their X.509-SVIDs during the TLS handshake, and each side validates the other's certificate against a trusted certificate authority in the same trust domain. X.509-SVIDs are short-lived by design — typically valid for hours, not days — and are automatically rotated by the issuing infrastructure.
+      </p>
+      <p>
+        <strong>JWT-SVIDs</strong> are JSON Web Tokens carrying the SPIFFE ID in the <code>sub</code> claim, signed by the trust domain's issuing authority. They are used in application-layer contexts where X.509 is not practical: HTTP request headers, gRPC metadata, webhook payloads. JWT-SVIDs carry an audience (<code>aud</code>) claim that scopes the token to a specific service or endpoint, limiting the blast radius of a stolen token.
       </p>
 
-      <a href="https://dira.cyberdaemon.ai" class="dira-link">Full specification at dira.cyberdaemon.ai</a>
-    </div>
-  </section>
+      <div class="callout">
+        <div class="callout-label">Short-lived by design</div>
+        <p>
+          SVID lifetimes are typically between one hour and twenty-four hours, with automatic rotation before expiry. This is intentional: a short-lived certificate that is compromised has a bounded exposure window without requiring explicit revocation. The rotation infrastructure does the work that manual credential management fails to do.
+        </p>
+      </div>
+    </section>
 
-  <hr class="divider">
+    <section id="spire" style="scroll-margin-top: 72px;">
+      <h3>SPIRE: the reference implementation</h3>
+      <p>
+        SPIRE (the SPIFFE Runtime Environment) is the reference implementation of the SPIFFE specification. It is a CNCF project, open source, and production-grade. SPIRE has two components: a SPIRE Server and one or more SPIRE Agents.
+      </p>
+      <p>
+        The SPIRE Server is the certificate authority for a trust domain. It holds the signing keys, issues SVIDs, and manages the registration of workloads. It maintains a registry of workload identities and their attestation selectors.
+      </p>
+      <p>
+        SPIRE Agents run on each node in the environment. When a workload starts, it contacts the local SPIRE Agent via a Unix socket. The agent performs <em>workload attestation</em>: it queries the kernel and platform to determine the identity of the workload making the request. Selectors might include: the Kubernetes pod's service account name and namespace, the container image hash, the calling process's UID, or the AWS instance identity document. If the attested selectors match a registered entry in the SPIRE Server's registry, the agent fetches an SVID from the server and delivers it to the workload. No static secret is needed. The workload never handles a password or API key.
+      </p>
+      <p>
+        Trust domain federation in SPIRE allows two independent SPIRE installations to establish mutual trust. Each server publishes a bundle of its root certificates. When workloads in domain A need to authenticate to services in domain B, both sides can validate the other's SVIDs against the federated bundle. This enables cross-organization or cross-cluster mTLS without out-of-band key exchange.
+      </p>
+    </section>
 
-  <!-- GAP ANALYZER -->
-  <section id="analyzer">
-    <h2>Gap Analyzer</h2>
-    <p style="color: var(--text2); font-size: 0.92rem; margin-bottom: 0;">
-      Check which identity controls you have deployed. The analyzer shows what coverage you have and where the gap falls.
-    </p>
+    <section id="oauth-nhi" style="scroll-margin-top: 72px;">
+      <h3>OAuth2 patterns for non-human identity</h3>
+      <p>
+        OAuth2 is the dominant framework for delegated authorization in web and API contexts. Two patterns are most relevant for NHI:
+      </p>
+      <p>
+        The <strong>client credentials grant</strong> (RFC 6749 §4.4) is the standard pattern for machine-to-machine authentication. The client (a service or workload) presents its <code>client_id</code> and <code>client_secret</code> directly to the authorization server and receives an access token scoped to its own permissions. There is no user involved. The access token is short-lived and scoped to a specific audience. The limitation is the <code>client_secret</code>: it is a static credential that must be managed. Workload identity federation can replace it — cloud platforms now allow workloads to present a signed identity assertion (from SPIFFE or the cloud platform's own identity system) in place of a static secret.
+      </p>
+      <p>
+        The <strong>token exchange grant</strong> (RFC 8693) addresses delegation: a service that receives a token on behalf of a user can exchange that token for a new token scoped to a downstream service, carrying provenance information about the original subject. This is the standards-track mechanism for constrained delegation — "I am service A, acting on behalf of user B, calling service C." The resulting token carries both identities. RFC 8693 is the correct tool for building auditable delegation chains, though implementation support is inconsistent across authorization servers.
+      </p>
+    </section>
 
-    <div class="analyzer-wrap">
-      <div class="analyzer-title">Identity Controls Deployed</div>
-      <div class="analyzer-sub">Select the controls active in your environment</div>
+    <section id="mtls" style="scroll-margin-top: 72px;">
+      <h3>mTLS: mutual authentication at the transport layer</h3>
+      <p>
+        Standard TLS (as used in HTTPS) authenticates the server to the client: the server presents a certificate, the client validates it. Mutual TLS extends this: the client also presents a certificate, and the server validates it. Both parties cryptographically prove their identity before the connection proceeds.
+      </p>
+      <p>
+        For machine-to-machine communication, mTLS is the strongest available authentication mechanism at the transport layer. The certificate binds the identity to a cryptographic key pair. There is no password to steal, no API key to leak. Revocation is handled by certificate expiry and CRL/OCSP, or by short lifetimes that make revocation unnecessary. Combined with SPIFFE SVIDs, mTLS provides cryptographically verifiable workload identity with automated rotation and no static secrets.
+      </p>
+      <p>
+        The operational challenge is certificate issuance at scale and across organizational boundaries. Service meshes (Istio, Linkerd, Consul Connect) automate mTLS establishment between services within a cluster, but cross-cluster and cross-organization mTLS requires federation — the trust domain mechanism described in the SPIRE section above.
+      </p>
+    </section>
 
-      <div class="analyzer-controls" id="analyzerControls">
-        <label class="analyzer-check">
-          <input type="checkbox" value="vaulting" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            Credential vaulting
-            <small>CyberArk, HashiCorp Vault, Conjur</small>
-          </span>
-        </label>
-        <label class="analyzer-check">
-          <input type="checkbox" value="discovery" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            NHI discovery
-            <small>SailPoint, Astrix, similar</small>
-          </span>
-        </label>
-        <label class="analyzer-check">
-          <input type="checkbox" value="reviews" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            Access reviews
-            <small>Periodic entitlement certification</small>
-          </span>
-        </label>
-        <label class="analyzer-check">
-          <input type="checkbox" value="rotation" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            Secret rotation
-            <small>Automated credential refresh</small>
-          </span>
-        </label>
-        <label class="analyzer-check">
-          <input type="checkbox" value="agenttokens" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            Agent identity tokens
-            <small>Entra Agent ID, OIDC workload federation</small>
-          </span>
-        </label>
-        <label class="analyzer-check">
-          <input type="checkbox" value="jit" onchange="updateAnalysis()">
-          <span class="analyzer-check-label">
-            JIT provisioning
-            <small>Delinea, Teleport, session-bound access</small>
-          </span>
-        </label>
+    <section id="standards-gap" style="scroll-margin-top: 72px;">
+      <h3>What these standards cover — and where they stop</h3>
+      <p>
+        SPIFFE, mTLS, and OAuth2 client credentials together solve the authentication problem for workloads with a level of rigor that was not widely achievable five years ago. Short-lived cryptographic identity documents, automated rotation, attestation tied to execution environment, no static secrets in configuration. This is genuine progress.
+      </p>
+      <p>
+        The gap is precise: all of these answer <em>who</em>. None of them answer <em>what for</em>.
+      </p>
+      <p>
+        A SPIFFE X.509-SVID tells you that the certificate holder is <code>spiffe://agents.example.com/agent/summarizer/instance/a7b3c9</code>. It tells you nothing about what task that agent was given, whether the action it is currently taking is consistent with that task, or whether something has redirected the agent between the point of authentication and the point of this specific API call. Authentication is verified. Intent is invisible.
+      </p>
+
+      <div class="callout">
+        <div class="callout-label">Standards coverage</div>
+        <table class="compare-table" style="margin-top: 0.75rem; margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Standard / Pattern</th>
+              <th>Answers WHO</th>
+              <th>Answers WHAT FOR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SPIFFE / SVID</td>
+              <td><span class="tag-yes">yes</span></td>
+              <td><span class="tag-no">no</span></td>
+            </tr>
+            <tr>
+              <td>mTLS</td>
+              <td><span class="tag-yes">yes</span></td>
+              <td><span class="tag-no">no</span></td>
+            </tr>
+            <tr>
+              <td>OAuth2 client credentials</td>
+              <td><span class="tag-yes">yes</span></td>
+              <td><span class="tag-no">no</span></td>
+            </tr>
+            <tr>
+              <td>RFC 8693 token exchange</td>
+              <td><span class="tag-yes">yes (with ancestry)</span></td>
+              <td><span class="tag-no">no</span></td>
+            </tr>
+            <tr>
+              <td>Workload attestation (SPIRE)</td>
+              <td><span class="tag-yes">yes</span></td>
+              <td><span class="tag-no">no</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="analyzer-result">
-        <div class="result-label">Coverage Analysis</div>
-        <ul class="result-items" id="resultItems">
-          <li class="result-item">
-            <span class="result-icon gap">?</span>
-            <span class="result-text">Select controls above to see your coverage<small>Analysis updates in real time</small></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
+      <p>
+        The CNCF SPIFFE specification and RFC 8693 are the primary references for this section. Neither document addresses behavioral authorization — their scope is explicitly limited to identity issuance and delegation.
+      </p>
+    </section>
 
-</main>
+    <hr class="section-divider">
 
+    <!-- ── 400 LEVEL ── -->
+    <section id="section-400" style="scroll-margin-top: 72px;">
+      <div class="section-meta">400 — Advanced</div>
+      <h2>The Runtime Authorization Problem</h2>
+    </section>
+
+    <section id="runtime-problem" style="scroll-margin-top: 72px;">
+      <h3>Defining the problem precisely</h3>
+      <p>
+        Authentication answers: is this identity genuine? Authorization answers: is this identity permitted to access this resource? Both are well-defined problems with mature solutions. A third property — behavioral consistency — is distinct from both and is not addressed by either.
+      </p>
+      <p>
+        Behavioral consistency, as a security property, asks: is the sequence of actions this agent is taking consistent with what it was authorized to accomplish? An agent authorized to summarize a set of documents has a bounded action space: read those documents, produce text. An agent that reads the documents and then begins querying an employee directory, encoding data in base64, and making outbound HTTP requests to external endpoints is technically operating within its read permissions — but is clearly not doing what it was sent to do.
+      </p>
+      <p>
+        The gap between authentication/authorization and behavioral consistency is the runtime authorization problem. It is a security property that current IAM infrastructure has no mechanism to enforce, because IAM was never designed to maintain session-level behavioral state.
+      </p>
+    </section>
+
+    <section id="runtime-requirements" style="scroll-margin-top: 72px;">
+      <h3>What a runtime authorization system would need to do</h3>
+      <p>
+        A system designed to enforce behavioral consistency across an agentic session would need to accomplish several things that no current deployed system does:
+      </p>
+      <ul class="prose-list">
+        <li><strong>Capture declared intent at session start.</strong> Before the agent takes any action, the system records what the agent was asked to do. This becomes the reference signal for the session — the baseline against which all subsequent actions are evaluated. The challenge is structured capture: natural language instructions need to be represented in a form that admits comparison with observed behavior.</li>
+        <li><strong>Maintain action-level telemetry throughout the session.</strong> Every tool call, API invocation, data read, and write must be logged in a way that is attributable to the specific agent instance, carries the delegation ancestry if applicable, and is available for in-session evaluation — not just post-hoc review.</li>
+        <li><strong>Compare realized actions against declared intent at each step.</strong> The comparison mechanism needs to distinguish actions that are clearly within scope, actions that are clearly outside scope, and the broad middle ground of ambiguous actions that could be consistent with the task or could represent drift.</li>
+        <li><strong>Enforce in real time.</strong> Post-hoc detection of behavioral drift is better than nothing. It is not a sufficient control. An agent that exfiltrates data over thirty seconds cannot be remediated by an alert that fires six minutes later. The enforcement mechanism needs to operate at action execution time, not after the fact.</li>
+        <li><strong>Handle delegation without losing accountability.</strong> When the root agent spawns sub-agents, the behavioral constraints of the session need to propagate down the delegation chain. A sub-agent cannot have broader behavioral permissions than the task scope its parent was given.</li>
+      </ul>
+    </section>
+
+    <section id="runtime-hard" style="scroll-margin-top: 72px;">
+      <h3>Why this is hard</h3>
+      <p>
+        Three structural difficulties make runtime behavioral authorization genuinely hard, not just underimplemented.
+      </p>
+      <p>
+        First, agents do not declare intent in structured form. A user says "research competitor pricing and put together a summary." That instruction is sufficient for a human to act on. It is not a structured authorization policy. Extracting a set of bounded, verifiable behavioral constraints from natural language — and doing so robustly, across diverse task types — is an unsolved problem. Approximate solutions exist; none are reliable enough for hard enforcement.
+      </p>
+      <p>
+        Second, the action chain spans multiple systems with different visibility. An agent using tools across a browser, a code execution environment, an API gateway, and a file system produces telemetry in four places with four different formats, four different logging schemas, and no common correlation mechanism. Reconstructing a coherent action chain across these systems is a significant engineering problem, independent of the authorization logic on top of it.
+      </p>
+      <p>
+        Third, distinguishing legitimate context adaptation from behavioral drift is a judgment call. An agent summarizing research documents that follows a citation to an adjacent topic is adapting to the task. An agent that follows citations to a completely unrelated topic and begins performing actions unrelated to the original request has drifted. The boundary between these is not crisp, and false positives (halting legitimate agents) carry real costs.
+      </p>
+    </section>
+
+    <section id="runtime-delegation" style="scroll-margin-top: 72px;">
+      <h3>Multi-agent trust and delegation bounds</h3>
+      <p>
+        When agent A delegates to agent B, what authorization does agent B inherit? This question does not have a consensus answer in any current standard or deployed system.
+      </p>
+      <p>
+        Three models are possible. Full inheritance: agent B gets everything agent A had. This maximizes capability but means a compromised or misbehaving sub-agent has the full permission and behavioral scope of the orchestrator. Explicit downscoping: agent A issues a constrained grant to agent B, specifying what subset of its permissions and behavioral scope the sub-agent is authorized for. This is the least-privilege model and the most secure, but it requires the orchestrating agent to reason about what scope is appropriate — which is itself a non-trivial capability. Zeroing: agent B starts with no inherited context and must re-authenticate with the root authority. This is secure but breaks continuity in delegation chains where context propagation is necessary for the task.
+      </p>
+      <p>
+        Capability-based security models suggest a partial answer: rather than inheriting role-based permissions, sub-agents receive specific, scoped capability tokens that permit exactly the actions they need for their delegated sub-task and nothing more. This limits blast radius at each delegation hop. It requires the issuing system to understand task decomposition, which returns us to the structured intent problem.
+      </p>
+    </section>
+
+    <section id="runtime-directions" style="scroll-margin-top: 72px;">
+      <h3>Current research directions</h3>
+      <p>
+        The field is active but pre-standardization. Several approaches are being explored:
+      </p>
+      <p>
+        <strong>Constitutional AI and capability restriction at training time.</strong> Rather than enforcing behavioral bounds at runtime, this approach bakes constraints into the model itself during training. The model is trained to refuse certain categories of action regardless of instructions. This works for coarse constraints (do not produce CSAM, do not provide instructions for weapons) but is brittle for task-specific behavioral bounds (do not access systems outside the scope of this particular task). The constraint is global; the requirement is contextual.
+      </p>
+      <p>
+        <strong>Capability-based security tokens scoped to specific intents.</strong> Rather than issuing general-purpose access tokens, this approach issues tokens that carry the task context as a first-class attribute. A token issued for "summarize documents in folder X" encodes that scope, and the receiving service can evaluate whether the requested action falls within it. This maps well to existing OAuth2 scope mechanisms but requires the authorization server to understand task semantics — a hard dependency on structured intent representation.
+      </p>
+      <p>
+        <strong>Dual-Intent Runtime Authorization (DIRA)</strong> is one proposed framework for this class of problem, treating declared intent and realized intent as two signals compared at each action step: <a href="https://dira.cyberdaemon.ai">dira.cyberdaemon.ai</a>.
+      </p>
+    </section>
+
+    <section id="runtime-open" style="scroll-margin-top: 72px;">
+      <h3>Open problems</h3>
+      <ol class="open-problems">
+        <li>
+          <strong>Cross-trust-domain delegation chains</strong>
+          <span>When an agent delegates across a SPIFFE trust domain boundary, behavioral context does not transfer. The receiving system knows who sent the request via the SVID. It does not know the original intent, the delegation depth, or the constraints the originating domain expected to apply. No standard exists for behavioral context propagation across trust domain boundaries.</span>
+        </li>
+        <li>
+          <strong>Audit trail completeness</strong>
+          <span>An audit trail that records tool calls but not reasoning state is incomplete. An agent that reaches the same API call from two different reasoning paths — one legitimate, one injected — produces identical audit logs. Distinguishing them requires logging the intermediate reasoning, which raises its own privacy and storage questions and is not currently standardized.</span>
+        </li>
+        <li>
+          <strong>Real-time vs. post-hoc verification</strong>
+          <span>Post-hoc analysis (reviewing logs after the session) is tractable with existing tooling. Real-time enforcement (blocking an action before it executes) requires sub-second evaluation of behavioral consistency, which is computationally expensive if the evaluation involves a language model and may introduce unacceptable latency in tool-calling loops.</span>
+        </li>
+        <li>
+          <strong>Structured intent capture at scale</strong>
+          <span>Reliably extracting a bounded, verifiable behavioral specification from free-form natural language instructions is unsolved. Approaches that work in controlled settings fail on the diversity of real-world task descriptions. Until this problem is solved, any runtime authorization system that depends on structured intent has a soft dependency on an unreliable extraction mechanism.</span>
+        </li>
+        <li>
+          <strong>Standard identity for the agent lifecycle</strong>
+          <span>SPIFFE covers workload identity at a point in time. It does not cover the agent lifecycle: identity at spawn, identity propagation through sub-agent delegation, identity at session end, and revocation of a specific agent instance without revoking the entire workload class. Agent-specific lifecycle identity is not addressed in any current standard.</span>
+        </li>
+      </ol>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
 <footer>
-  <a href="https://cyberdaemon.ai">cyberdaemon.ai</a>
+  <a href="https://cyberdaemon.ai">cyberdaemon.ai</a> · Casey Gager · Views are my own
 </footer>
 
 <script>
-  const controls = [
-    {
-      value: 'vaulting',
-      label: 'Credential vaulting',
-      category: 'identity',
-      description: 'Secrets stored and rotated centrally. Covers identity-plane credential risk.',
-      covered: true
-    },
-    {
-      value: 'discovery',
-      label: 'NHI discovery',
-      category: 'identity',
-      description: 'Service accounts, OAuth grants, and API keys are inventoried. Reduces entitlement sprawl.',
-      covered: true
-    },
-    {
-      value: 'reviews',
-      label: 'Access reviews',
-      category: 'authorization',
-      description: 'Entitlements are periodically certified. Reduces stale access accumulation.',
-      covered: true
-    },
-    {
-      value: 'rotation',
-      label: 'Secret rotation',
-      category: 'identity',
-      description: 'Credentials are rotated on schedule or on-demand. Limits exposure window on compromise.',
-      covered: true
-    },
-    {
-      value: 'agenttokens',
-      label: 'Agent identity tokens',
-      category: 'authorization',
-      description: 'Agents get scoped, task-bound tokens. A meaningful step toward least-privilege for agentic workloads.',
-      covered: true
-    },
-    {
-      value: 'jit',
-      label: 'JIT provisioning',
-      category: 'authorization',
-      description: 'Access granted only for the session duration. Limits standing privilege exposure.',
-      covered: true
-    }
-  ];
-
-  const gaps = [
-    {
-      label: 'Declared intent capture',
-      description: 'No deployed control captures what the agent was asked to do at session start. No reference signal exists.',
-      category: 'runtime',
-      coveredBy: []
-    },
-    {
-      label: 'Behavioral drift detection',
-      description: 'No deployed control monitors whether current agent actions remain consistent with the original task.',
-      category: 'runtime',
-      coveredBy: []
-    },
-    {
-      label: 'Prompt injection defense',
-      description: 'No deployed control detects when an agent has been redirected by adversarial content encountered during execution.',
-      category: 'runtime',
-      coveredBy: []
-    },
-    {
-      label: 'Per-action intent verification',
-      description: 'No deployed control authorizes individual actions against a declared intent scope, only against static entitlement policies.',
-      category: 'runtime',
-      coveredBy: []
-    }
-  ];
-
-  function updateAnalysis() {
-    const checked = Array.from(document.querySelectorAll('#analyzerControls input:checked')).map(el => el.value);
-    const resultList = document.getElementById('resultItems');
-    resultList.innerHTML = '';
-
-    if (checked.length === 0) {
-      const li = document.createElement('li');
-      li.className = 'result-item';
-      li.innerHTML = '<span class="result-icon gap">?</span><span class="result-text">Select controls above to see your coverage<small>Analysis updates in real time</small></span>';
-      resultList.appendChild(li);
-      return;
-    }
-
-    // Covered controls
-    controls.filter(c => checked.includes(c.value)).forEach(c => {
-      const li = document.createElement('li');
-      li.className = 'result-item';
-      li.innerHTML = '<span class="result-icon covered">&#10003;</span><span class="result-text">' + c.label + ' <small>' + c.description + '</small></span>';
-      resultList.appendChild(li);
-    });
-
-    // Separator if we have both covered and gap items
-    const uncoveredControls = controls.filter(c => !checked.includes(c.value));
-    if (uncoveredControls.length > 0) {
-      uncoveredControls.forEach(c => {
-        const li = document.createElement('li');
-        li.className = 'result-item';
-        li.innerHTML = '<span class="result-icon partial">!</span><span class="result-text">' + c.label + ' not deployed<small>' + c.description + '</small></span>';
-        resultList.appendChild(li);
-      });
-    }
-
-    // Runtime gaps are always present regardless of what is checked
-    const gapHeader = document.createElement('li');
-    gapHeader.className = 'result-item';
-    gapHeader.style.cssText = 'border-top: 1px solid #c9a84c; margin-top: 0.5rem; padding-top: 0.75rem; color: #c9a84c; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;';
-    gapHeader.innerHTML = '<span style="width:20px;flex-shrink:0"></span><span>Runtime intent gap (no commercial control addresses these)</span>';
-    resultList.appendChild(gapHeader);
-
-    gaps.forEach(g => {
-      const li = document.createElement('li');
-      li.className = 'result-item';
-      li.innerHTML = '<span class="result-icon gap">&#215;</span><span class="result-text">' + g.label + ' <small>' + g.description + '</small></span>';
-      resultList.appendChild(li);
-    });
-  }
-</script>
-
-<script>
+  /* ── THEME TOGGLE ── */
   (function () {
     var btn = document.getElementById('theme-toggle');
     var html = document.documentElement;
+
     function applyTheme(t) {
       html.setAttribute('data-theme', t);
       btn.textContent = t === 'light' ? 'Light' : 'Dark';
     }
-    var saved = localStorage.getItem('cd-theme') || 'light';
+
+    var saved = '';
+    try { saved = localStorage.getItem('cd-theme') || ''; } catch (e) {}
+    if (!saved) {
+      saved = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
     applyTheme(saved);
+
     btn.addEventListener('click', function () {
       var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       applyTheme(next);
-      localStorage.setItem('cd-theme', next);
+      try { localStorage.setItem('cd-theme', next); } catch (e) {}
     });
+  }());
+
+  /* ── SIDEBAR ACTIVE LINK ── */
+  (function () {
+    var sections = Array.from(document.querySelectorAll('section[id]'));
+    var links = Array.from(document.querySelectorAll('.sidebar-nav a[href^="#"]'));
+
+    if (!sections.length || !links.length) return;
+
+    function getId(href) { return href.replace('#', ''); }
+
+    function onScroll() {
+      var scrollY = window.scrollY + 90;
+      var current = sections[0].id;
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= scrollY) {
+          current = sections[i].id;
+        }
+      }
+      links.forEach(function (a) {
+        a.classList.toggle('active', getId(a.getAttribute('href')) === current);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }());
 </script>
 
